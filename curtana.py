@@ -73,6 +73,7 @@ with open("logs", "r") as logfile:
         print(crayons.green(command,parse(command)), end = '' )
         this_command = parse(command)
         print(this_command,"\n")
+        # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
         index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
         print(crayons.yellow(student_tracker))
         print(type(student_tracker))
@@ -94,5 +95,9 @@ with open("logs", "r") as logfile:
            # + = [["command"] = command.get("command"),  ["time"] = command.get("command"), ["result"] = command.get("result")]
 
         else:
-          print(student_tracker_list[index])
-
+          student_tracker_list[index]["cmd_peg_count"] += 1
+          if this_command.get("result") == "0":
+              student_tracker_list[index]["success_peg_count"] += 1
+          else:
+              student_tracker_list[index]["fail_peg_count"] += 1
+          

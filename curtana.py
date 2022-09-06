@@ -14,8 +14,7 @@ def parse(data: str) -> {}:
      "Sep  1 16:06:44 bchd.a89b5f49-0b1b-4387-905e-5cf330f8095a student: student@bchd:/home/student$ sudo apt install python3-pip -y [0]"
   
     Return a command_anatomy of dictinataries like this:
-      {     "month": "Sep", 
-              "day": 1,
+      {     "month": "Sep",day": 1,
             "hours": 16,
             minutes: 10,
             seconds: 44,
@@ -64,19 +63,41 @@ def parse(data: str) -> {}:
 
     return command_anatomy 
 
+
+
+def name_parse(data: str) -> {}:
+    name_parser = re.compile(r'''
+        ^(?P<prefix>\s*git\s*config\s*--global\s*user\.name)\s*
+        "(?P<name>.*)"
+        ''', re.VERBOSE
+    )
+    name_parser_match = name_parser.match(data)
+    if name_parser_match:
+        name_hints = name_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
+    else:
+        name_hints = {
+        'unparsable': data 
+        }
+    return name_hints
+
+
 student_tracker = {}
 student_tracker_list = []
+verbose = False
 
 with open("logs", "r") as logfile:
     commands = logfile.readlines()
     for command in commands:
-        print(crayons.green(command,parse(command)), end = '' )
+        if verbose:
+           print(crayons.green(command,parse(command)), end = '' )
         this_command = parse(command)
-        print(this_command,"\n")
+        if verbose:
+            print(this_command,"\n")
         # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
         index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
-        print(crayons.yellow(student_tracker))
-        print(type(student_tracker))
+        if verbose:
+            print(crayons.yellow(student_tracker))
+            print(student_tracker_list)
         if index == "Init_me":
            student_tracker = {}
            student_tracker["domain"] = this_command.get('domain')
@@ -88,8 +109,10 @@ with open("logs", "r") as logfile:
            else:
               student_tracker["success_peg_count"] = 0
               student_tracker["fail_peg_count"] = 1
-           action = { this_command.get("command")}
-           print(crayons.yellow(student_tracker))
+           name_check = name_parse(this_command.get("command"))
+           student_tracker["student_name"] = name_check.get("name")
+           if verbose:
+               print(crayons.yellow(student_tracker))
            student_tracker_list.append(student_tracker)
            # student_tracker["commands"] = []
            # + = [["command"] = command.get("command"),  ["time"] = command.get("command"), ["result"] = command.get("result")]
@@ -100,4 +123,13 @@ with open("logs", "r") as logfile:
               student_tracker_list[index]["success_peg_count"] += 1
           else:
               student_tracker_list[index]["fail_peg_count"] += 1
-          
+          name_check = name_parse(this_command.get("command"))
+          if "name" in name_check:
+              student_tracker_list[index]["student_name"] = name_check.get("name")
+      
+
+    for student in student_tracker_list:
+        print(crayons.green(f"student: {student.get('student_name')}"), end = '')
+        print(crayons.green(f"  cmds: {student.get('cmd_peg_count')}"), end = '')
+        print(crayons.green(f"  successes: {student.get('success_peg_count')}"), end = '')
+        print(crayons.green(f"  fails: {student.get('fail_peg_count')}"))

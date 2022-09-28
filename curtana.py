@@ -149,7 +149,7 @@ with open("logs", "r") as logfile:
       
 
     for student in student_tracker_list:
-        print(crayons.green(f"student: {student.get('student_name')}"), end = '')
+        print(crayons.green(f"student: {student.get('student_name'):<20}"), end = '')
         print(crayons.green(f"  cmds: {student.get('cmd_peg_count')}"), end = '')
         print(crayons.green(f"  successes: {student.get('success_peg_count')}"), end = '')
         print(crayons.green(f"  fails: {student.get('fail_peg_count')}"))

@@ -80,6 +80,26 @@ def name_parse(data: str) -> {}:
         }
     return name_hints
 
+"""
+Data per 
+- studentracker:
+    domain: value
+    student_name: 
+    cmd_peg_count:
+    success_peg_count
+    fail_peg_count
+    time_since_last_
+    inactivity_seconds: int
+    most_recent_command: string
+    commands:
+      - command: string
+        result: int
+        think_time: seconds
+
+
+"""
+
+
 
 student_tracker = {}
 student_tracker_list = []

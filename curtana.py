@@ -76,7 +76,7 @@ def name_parse(data: str) -> {}:
         name_hints = name_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
     else:
         name_hints = {
-        'unparsable': data 
+        'name': "none" 
         }
     return name_hints
 
@@ -105,7 +105,7 @@ student_tracker = {}
 student_tracker_list = []
 verbose = False
 
-with open("logs", "r") as logfile:
+with open("student.logs", "r") as logfile:
     commands = logfile.readlines()
     for command in commands:
         if verbose:

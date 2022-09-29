@@ -139,6 +139,7 @@ with open("students.log", "r") as logfile:
            # + = [["command"] = command.get("command"),  ["time"] = command.get("command"), ["result"] = command.get("result")]
 
         else:
+          student_tracker["latest_command"]= this_command.get('command')
           student_tracker_list[index]["cmd_peg_count"] += 1
           if this_command.get("result") == "0":
               student_tracker_list[index]["success_peg_count"] += 1
@@ -149,8 +150,8 @@ with open("students.log", "r") as logfile:
               student_tracker_list[index]["student_name"] = name_check.get("name")
       
 
-    print(crayons.green(f"Student             Commands  Successes  Fails  Latest Command"))
-    print(crayons.green(f"----------------    --------  ---------  -----  ---------------------------------------"))
+    print(crayons.green(f"Student             Commands  Successes  Fails  Results + Latest Command"))
+    print(crayons.green(f"------------------  --------  ---------  -----  ---------------------------------------"))
     for student in student_tracker_list:
         print(crayons.green(f"{str(student.get('student_name')):<20}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')

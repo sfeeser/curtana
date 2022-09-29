@@ -127,7 +127,7 @@ student_tracker_list = []
 verbose = False
 
 
-with open("students.log", "r") as logfile:
+with open("/var/log/students.log", "r") as logfile:
     commands = logfile.readlines()
     for command in commands:
         if verbose:
@@ -172,6 +172,7 @@ with open("students.log", "r") as logfile:
           name_check = name_parse(this_command.get("command"))
           if "name" in name_check:
               student_tracker_list[index]["student_name"] = name_check.get("name")
+          student_tracker["time_stamp"] = "2022" + ":" + this_command.get('month') + ":" + this_command.get('day') + ":" + this_command.get('hour') + ":" + this_command.get('minute') + ":" + this_command.get('second')
       
     print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
     print(crayons.green(f"Student             Cmds   Success  Fail   Time     Results + Latest Command"))
@@ -181,6 +182,7 @@ with open("students.log", "r") as logfile:
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
+        print(crayons.yellow(f" {student.get('time_stamp')}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
         print(crayons.yellow(f" {sluggy}  "), end = '')
         if student.get('latest_result') is None:

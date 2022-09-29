@@ -4,6 +4,7 @@ from subprocess import call
 import json
 import crayons
 import re
+from datetime import datetime
 
 def parse(data: str) -> {}:
 
@@ -98,10 +99,33 @@ Data per
 """
 
 
+def thinktime(start_time):
+    # start time
+
+    # convert time string to datetime
+    t1 = datetime.strptime(start_time, "%Y:%b:%d:%H:%M:%S")
+
+    # get difference
+    delta = datetime.utcnow() - t1
+    return delta.total_seconds()
+
+
+
+'''
+this_command_time = "2022:Sep:22:18:14:22"
+
+# time difference in seconds
+sluggy = int(thinktime(this_command_time))
+
+print(f"Time difference is {sluggy} seconds")
+print(datetime.utcnow())
+'''
+
 
 student_tracker = {}
 student_tracker_list = []
 verbose = False
+
 
 with open("students.log", "r") as logfile:
     commands = logfile.readlines()
@@ -135,6 +159,7 @@ with open("students.log", "r") as logfile:
            student_tracker_list.append(student_tracker)
            # student_tracker["commands"] = []
            # + = [["command"] = command.get("command"),  ["time"] = command.get("command"), ["result"] = command.get("result")]
+           student_tracker["time_stamp"] = "2022" + ":" + this_command.get('month') + ":" + this_command.get('day') + ":" + this_command.get('hour') + ":" + this_command.get('minute') + ":" + this_command.get('second')
 
         else:
           student_tracker["latest_command"]= this_command.get('command')
@@ -148,17 +173,20 @@ with open("students.log", "r") as logfile:
           if "name" in name_check:
               student_tracker_list[index]["student_name"] = name_check.get("name")
       
-
-    print(crayons.green(f"Student             Commands  Successes  Fails  Results + Latest Command"))
-    print(crayons.green(f"------------------  --------  ---------  -----  ---------------------------------------"))
+ 
+    print(crayons.green(f"Student             Cmds   Success  Fail   Time     Results + Latest Command"))
+    print(crayons.green(f"------------------  -----  -------  ----   ------   ----------------------------------"))
     for student in student_tracker_list:
-        print(crayons.green(f"{str(student.get('student_name')):<20}"), end = '')
+        print(crayons.green(f"{str(student.get('student_name')):<17}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
-        print(crayons.green(f"{student.get('success_peg_count'):>9}  "), end = '')
-        print(crayons.green(f"{student.get('fail_peg_count'):>5}  " ), end = '')
+        print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
+        print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
+        sluggy = int(thinktime(student.get('time_stamp')))
+        print(crayons.yellow(f" {sluggy}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:
             print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
+            
         print(crayons.green(f" {str(student.get('latest_command')):>3}"))
 

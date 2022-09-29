@@ -148,8 +148,12 @@ with open("students.log", "r") as logfile:
               student_tracker_list[index]["student_name"] = name_check.get("name")
       
 
+    print(crayons.green(f"Student             Commands     Successes    Fails"))
+    print(crayons.green(f"----------------    --------     ---------    -----"))
     for student in student_tracker_list:
-        print(crayons.green(f"student: {str(student.get('student_name')):<20}"), end = '')
-        print(crayons.green(f"  cmds: {student.get('cmd_peg_count')}"), end = '')
-        print(crayons.green(f"  successes: {student.get('success_peg_count')}"), end = '')
-        print(crayons.green(f"  fails: {student.get('fail_peg_count')}"))
+        print(crayons.green(f"{str(student.get('student_name')):<20}"), end = '')
+        print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
+        print(crayons.green(f"{student.get('success_peg_count'):>12}  "), end = '')
+        print(crayons.green(f"{student.get('fail_peg_count'):>7}"))
+
+

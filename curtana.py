@@ -175,16 +175,16 @@ with open("/var/log/students.log", "r") as logfile:
           student_tracker["time_stamp"] = "2022" + ":" + this_command.get('month') + ":" + this_command.get('day') + ":" + this_command.get('hour') + ":" + this_command.get('minute') + ":" + this_command.get('second')
       
     print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
-    print(crayons.green(f"Student             Cmds   Success  Fail   Time     Results + Latest Command"))
-    print(crayons.green(f"------------------  -----  -------  ----   ------   ----------------------------------"))
+    print(crayons.green(f"Student             Cmds   Success  Fail   Time   Last Command    Seconds  Results + Latest Command"))
+    print(crayons.green(f"------------------  -----  -------  ----   ------ ------------    -------  ----------------------------------"))
     for student in student_tracker_list:
         print(crayons.green(f"{str(student.get('student_name')):<17}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
-        print(crayons.yellow(f" {student.get('time_stamp')}  "), end = '')
+        print(crayons.yellow(f" {student.get('time_stamp'):<20}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
-        print(crayons.yellow(f" {sluggy}  "), end = '')
+        print(crayons.yellow(f" {sluggy:>7}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:

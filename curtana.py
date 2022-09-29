@@ -156,6 +156,9 @@ with open("students.log", "r") as logfile:
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>9}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>5}  " ), end = '')
-        print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
+        if student.get('latest_result') is None:
+            print(crayons.green(f"{[  0]}"), end = '' )
+        else:
+            print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
         print(crayons.green(f" {str(student.get('latest_command')):>3}"))
 

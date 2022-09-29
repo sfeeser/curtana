@@ -55,12 +55,10 @@ def parse(data: str) -> {}:
         command_parser_match = command_parser.match(line)
         if command_parser_match:
             command_anatomy = command_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
-            
         else:
             command_anatomy= {
                 'unparsable': line
             }
-
     return command_anatomy 
 
 
@@ -158,6 +156,6 @@ with open("students.log", "r") as logfile:
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>9}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>5}  " ), end = '')
-        print(crayons.green(f"[{student.get('latest_result')}] "), end = '' )
-        print(crayons.green(f"{str(student.get('latest_command'))}"))
+        print(crayons.green(f"[{student.get('latest_result')}]"), end = '' )
+        print(crayons.green(f" {str(student.get('latest_command')):>4}"))
 

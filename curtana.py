@@ -173,7 +173,7 @@ with open("students.log", "r") as logfile:
           if "name" in name_check:
               student_tracker_list[index]["student_name"] = name_check.get("name")
       
- 
+    print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
     print(crayons.green(f"Student             Cmds   Success  Fail   Time     Results + Latest Command"))
     print(crayons.green(f"------------------  -----  -------  ----   ------   ----------------------------------"))
     for student in student_tracker_list:

@@ -147,7 +147,7 @@ with open("students.log", "r") as logfile:
 
         index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
         student_tracker_list[index]["cmd_peg_count"] += 1
-        if this_command.get("result") == 0:
+        if this_command.get("result") == "0":
             student_tracker_list[index]["success_peg_count"] += 1
         else:
             student_tracker_list[index]["fail_peg_count"] += 1

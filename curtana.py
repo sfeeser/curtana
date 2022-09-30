@@ -62,6 +62,21 @@ def parse(data: str) -> {}:
             }
     return command_anatomy 
 
+def class_name_parse(data: str) -> {}:
+    name_parser = re.compile(r'''
+        (?P<class_prefix>live-class-id)\s*
+        (?P<class_id>.*)
+        ''', re.VERBOSE
+    )
+    class_name_parser_match = name_parser.match(data)
+    if class_name_parser_match:
+        name_hints = class_name_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
+    else:
+        name_hints = {
+        'unparsable': data
+        }
+    return name_hints
+
 
 
 def name_parse(data: str) -> {}:
@@ -110,74 +125,51 @@ def thinktime(start_time):
     return delta.total_seconds()
 
 
-
-'''
-this_command_time = "2022:Sep:22:18:14:22"
-
-# time difference in seconds
-sluggy = int(thinktime(this_command_time))
-
-print(f"Time difference is {sluggy} seconds")
-print(datetime.utcnow())
-'''
-
-
 student_tracker = {}
 student_tracker_list = []
 verbose = False
 
 
-with open("/var/log/students.log", "r") as logfile:
+with open("students.log", "r") as logfile:
     commands = logfile.readlines()
     for command in commands:
-        if verbose:
-           print(crayons.green(command,parse(command)), end = '' )
         this_command = parse(command)
-        if verbose:
-            print(this_command,"\n")
         # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
         index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
-        if verbose:
-            print(crayons.yellow(student_tracker))
-            print(student_tracker_list)
+
         if index == "Init_me":
            student_tracker = {}
            student_tracker["domain"] = this_command.get('domain')
            student_tracker["student_name"] = ""
-           student_tracker["latest_command"]= this_command.get('command')
-           student_tracker["cmd_peg_count"] = 1
-           if this_command.get("result") == "0":
-              student_tracker["success_peg_count"] = 1
-              student_tracker["fail_peg_count"] = 0
-           else:
-              student_tracker["success_peg_count"] = 0
-              student_tracker["fail_peg_count"] = 1
-           name_check = name_parse(this_command.get("command"))
-           student_tracker["student_name"] = name_check.get("name")
-           if verbose:
-               print(crayons.yellow(student_tracker))
+           student_tracker["cmd_peg_count"] = 0
+           student_tracker["success_peg_count"] = 0
+           student_tracker["fail_peg_count"] = 0
            student_tracker_list.append(student_tracker)
-           # student_tracker["commands"] = []
-           # + = [["command"] = command.get("command"),  ["time"] = command.get("command"), ["result"] = command.get("result")]
-           student_tracker["time_stamp"] = "2022" + ":" + this_command.get('month') + ":" + this_command.get('day') + ":" + this_command.get('hour') + ":" + this_command.get('minute') + ":" + this_command.get('second')
-
+        student_tracker["cmd_peg_count"] += 1
+        if this_command.get("result") == "0":
+            student_tracker["success_peg_count"] += 1
         else:
-          student_tracker["latest_command"]= this_command.get('command')
-          student_tracker["latest_result"]= this_command.get('result')
-          student_tracker_list[index]["cmd_peg_count"] += 1
-          if this_command.get("result") == "0":
-              student_tracker_list[index]["success_peg_count"] += 1
-          else:
-              student_tracker_list[index]["fail_peg_count"] += 1
-          name_check = name_parse(this_command.get("command"))
-          if "name" in name_check:
-              student_tracker_list[index]["student_name"] = name_check.get("name")
-          student_tracker["time_stamp"] = "2022" + ":" + this_command.get('month') + ":" + this_command.get('day') + ":" + this_command.get('hour') + ":" + this_command.get('minute') + ":" + this_command.get('second')
-      
+            student_tracker["fail_peg_count"] += 1
+        student_tracker["latest_command"]= this_command.get('command')
+        student_tracker["latest_result"]= this_command.get('result')
+        class_name_check = class_name_parse(this_command.get("command"))
+        if "class_id" in class_name_check:
+              student_tracker_list[index]["class_id"] = class_name_check.get("class_id")
+        name_check = name_parse(this_command.get("command"))
+        if "name" in name_check:
+              student_tracker["student_name"] = name_check.get("name")
+        student_tracker["time_stamp"] = "2022" \
+          + ":" + this_command.get('month') \
+          + ":" + this_command.get('day') \
+          + ":" + this_command.get('hour') \
+          + ":" + this_command.get('minute') \
+          + ":" + this_command.get('second')
+  
     print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
-    print(crayons.green(f"Student             Cmds   Success  Fail   Time   Last Command    Seconds  Results + Latest Command"))
-    print(crayons.green(f"------------------  -----  -------  ----   ------ ------------    -------  ----------------------------------"))
+    print(crayons.green(f"Class-ID    Student             Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
+    print(crayons.green(f"----------- ------------------  -----  -------  ----   -------------------    -------  ----------------------------------"))
     for student in student_tracker_list:
+        print(crayons.green(f"{str(student.get('class_id')):<12}"), end = '')
         print(crayons.green(f"{str(student.get('student_name')):<17}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')

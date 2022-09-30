@@ -167,10 +167,10 @@ with open("students.log", "r") as logfile:
           + ":" + this_command.get('second')
   
     print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
-    print(crayons.green(f"Class-ID    Student             Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
-    print(crayons.green(f"----------- ------------------  -----  -------  ----   -------------------    -------  ----------------------------------"))
+    print(crayons.green(f"Class-ID          Student             Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
+    print(crayons.green(f"----------------- ------------------  -----  -------  ----   -------------------    -------  ----------------------------------"))
     for student in student_tracker_list:
-        print(crayons.green(f"{str(student.get('class_id')):<12}"), end = '')
+        print(crayons.green(f"{str(student.get('class_id')):<18}"), end = '')
         print(crayons.green(f"{str(student.get('student_name')):<17}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')

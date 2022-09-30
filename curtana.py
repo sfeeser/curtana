@@ -136,7 +136,6 @@ with open("students.log", "r") as logfile:
         this_command = parse(command)
         # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
         index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
-
         if index == "Init_me":
            student_tracker = {}
            student_tracker["domain"] = this_command.get('domain')
@@ -145,20 +144,22 @@ with open("students.log", "r") as logfile:
            student_tracker["success_peg_count"] = 0
            student_tracker["fail_peg_count"] = 0
            student_tracker_list.append(student_tracker)
-        student_tracker["cmd_peg_count"] += 1
-        if this_command.get("result") == "0":
-            student_tracker["success_peg_count"] += 1
+
+        index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
+        student_tracker_list[index]["cmd_peg_count"] += 1
+        if this_command.get("result") == 0:
+            student_tracker_list[index]["success_peg_count"] += 1
         else:
-            student_tracker["fail_peg_count"] += 1
-        student_tracker["latest_command"]= this_command.get('command')
-        student_tracker["latest_result"]= this_command.get('result')
+            student_tracker_list[index]["fail_peg_count"] += 1
+        student_tracker_list[index]["latest_command"]= this_command.get('command')
+        student_tracker_list[index]["latest_result"]= this_command.get('result')
         class_name_check = class_name_parse(this_command.get("command"))
         if "class_id" in class_name_check:
               student_tracker_list[index]["class_id"] = class_name_check.get("class_id")
         name_check = name_parse(this_command.get("command"))
         if "name" in name_check:
-              student_tracker["student_name"] = name_check.get("name")
-        student_tracker["time_stamp"] = "2022" \
+              student_tracker_list[index]["student_name"] = name_check.get("name")
+        student_tracker_list[index]["time_stamp"] = "2022" \
           + ":" + this_command.get('month') \
           + ":" + this_command.get('day') \
           + ":" + this_command.get('hour') \

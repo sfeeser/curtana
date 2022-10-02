@@ -32,7 +32,6 @@ def parse(data: str) -> {}:
         raw:         (boolean) unprocessed output if True
         quiet:       (boolean) suppress warning messages if True
     """
-
     
 
     # REGEX was tested here: https://regex101.com/r/6eO469/1
@@ -96,7 +95,7 @@ def name_parse(data: str) -> {}:
 
 def help_parse(data: str) -> {}:
     help_parser = re.compile(r'''
-        /^(?P<prefix>\s*(bash)*\s*live-help)\s*
+        ^(?P<prefix>\s*(bash)*\s*live-help)\s*
         (?P<lab>[0-9]+)\s*
         (?P<step>[0-9]+)
         ''', re.VERBOSE
@@ -105,28 +104,26 @@ def help_parse(data: str) -> {}:
     if help_parser_match:
         help_hints = help_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
     else:
-        name_hints = {
+        help_hints = {
         'unparsable': data
         }
     return help_hints
 
 """
-Data per 
-- studentracker:
-    domain: value
-    student_name: 
-    cmd_peg_count:
-    success_peg_count
-    fail_peg_count
-    time_since_last_
-    inactivity_seconds: int
+Data format 
+studentracker_list:
+  - domain: string
+    class_id: string
+    student_name: string
+    cmd_peg_count: int
+    success_peg_count: int
+    fail_peg_count: int
+    time_stamp: string
     most_recent_command: string
-    commands:
-      - command: string
-        result: int
-        think_time: seconds
-
-
+    latest_command: string
+    latest_result: string
+    live_help: string   #NEW
+    live_gtg: string    #NEW
 """
 
 
@@ -189,17 +186,23 @@ with open("students.log", "r") as logfile:
           + ":" + this_command.get('hour') \
           + ":" + this_command.get('minute') \
           + ":" + this_command.get('second')
-  
-    print(crayons.yellow(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
-    print(crayons.green(f"Class-ID          Student             Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
-    print(crayons.green(f"----------------- ------------------  -----  -------  ----   -------------------    -------  ----------------------------------"))
+        # obe-wan kenobi you're my only hope
+        help_check = help_parse(this_command.get("command"))
+        if "step" in help_check:
+              student_tracker_list[index]["help_request"] = help_check.get("lab") + "-" + help_check.get("step")
+
+    print(crayons.yellow(f"LAB: 22  COUNTER: 2   enter: \"live-gtg 22\" to report lab completed"))
+    print(crayons.magenta(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
+    print(crayons.green(f"Class-ID          Student           Help   Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
+    print(crayons.green(f"----------------- ----------------  -----  -----  -------  ----   -------------------    -------  ----------------------------------"))
     for student in student_tracker_list:
-        print(crayons.green(f"{str(student.get('class_id')):<18}"), end = '')
-        print(crayons.green(f"{str(student.get('student_name')):<17}"), end = '')
+        print(crayons.green(f"{student.get('class_id','NONE'):<18}"), end = '')
+        print(crayons.green(f"{student.get('student_name','none'):<17}"), end = '')
+        print(crayons.red  (f"{student.get('help_request',''):>6}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
-        print(crayons.yellow(f" {student.get('time_stamp'):<20}  "), end = '')
+        print(crayons.yellow(f"{student.get('time_stamp'):<20}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
         print(crayons.yellow(f" {sluggy:>7}  "), end = '')
         if student.get('latest_result') is None:

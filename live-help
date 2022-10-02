@@ -5,32 +5,42 @@ STEP=$2
 
 if [[ $# == 0 ]]
     then
-	printf "\n OK, you want help! Enter your request like this:
-	  FORMAT:  help LAB# STEP#
-	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+	printf "\n Need help in an instructor lead class?  Enter your request like this:
+    ASK FOR HELP:  live-help LAB# STEP#
+    EXAMPLE: Help on lab 6, step 20 enter: live-help 6 20\n
+    To CLEAR a request for help, enter: live-help clear\n\n"
+	  exit 0
 fi
+
+if [[ $LAB =~ clear ]]
+    then
+      printf " \n Trouble request CLEARED \n\n"
+    exit 0
+fi
+
 
 if ! [[ $LAB =~ ^[0-9]+$ ]] 
   then
     printf "\n SORRY! Your first paramter was NOT a number, enter your help request like this:
-	  FORMAT:  help LAB# STEP#
-	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+	  FORMAT:  live-help LAB# STEP#
+	  EXAMPLE: Help on lab 6, step 20 enter: live-help 6 20\n\n"
     exit 0
   else
-    PARAMTER1=true
+    PARAM1=true
 fi
+
 
 if ! [[ $STEP =~ ^[0-9]+$ ]] 
   then
     printf "\n SORRY! Your second paramter was NOT a number, enter your help request like this:
-	  FORMAT:  help LAB# STEP#
-	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+	  FORMAT:  live-help LAB# STEP#
+	  EXAMPLE: Help on lab 6, step 20 enter: live-help 6 20\n\n"
     exit 0
   else
-    PARAMTER2=true
+    PARAM2=true
 fi
 
-if [[ $PARAMTER1 = true && $PARAMTER2 = true ]]
+if [[ $PARAM1 = true && $PARAM2 = true ]]
   then
     printf "\n Your request for help on LAB: $LAB  STEP: $STEP has been sent\n\n"
 fi

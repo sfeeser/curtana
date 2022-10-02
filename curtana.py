@@ -94,6 +94,22 @@ def name_parse(data: str) -> {}:
         }
     return name_hints
 
+def help_parse(data: str) -> {}:
+    help_parser = re.compile(r'''
+        /^(?P<prefix>\s*(bash)*\s*live-help)\s*
+        (?P<lab>[0-9]+)\s*
+        (?P<step>[0-9]+)
+        ''', re.VERBOSE
+    )
+    help_parser_match = help_parser.match(data)
+    if help_parser_match:
+        help_hints = help_parser_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
+    else:
+        name_hints = {
+        'unparsable': data
+        }
+    return help_hints
+
 """
 Data per 
 - studentracker:
@@ -165,7 +181,7 @@ with open("students.log", "r") as logfile:
         name_check = name_parse(this_command.get("command"))
         if "name" in name_check:
               student_tracker_list[index]["student_name"] = name_check.get("name")
-        # PARSE command for STUCK message
+        # PARSE command for SETUP message
         # Store the time/date string in a python datetime friendly manner
         student_tracker_list[index]["time_stamp"] = "2022" \
           + ":" + this_command.get('month') \

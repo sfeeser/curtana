@@ -1,0 +1,26 @@
+#!/bin/bash
+
+LAB=$1
+STEP=$2
+
+if [[ $# == 0 ]]
+    then
+	printf "\n Tell the instructor that you completed the assign lab as follows:
+    LAB COMPLETE:  live-gtg LAB#
+    EXAMPLE: Completed lab 6: live-gtg 6\n"
+  exit 0
+fi
+
+
+if ! [[ $LAB =~ ^[0-9]+$ ]] 
+  then
+    printf "\n SORRY! Your first paramter MUST be a number, enter your request like this:
+	  FORMAT:  live-gtg LAB# where <LAB#> is the lab number you just completed
+	  EXAMPLE: Completed lab 6: live-gtg 6\n\n"
+    exit 0
+  else
+    PARAM1=true
+    printf "\n    Lab $LAB completion message sent!\n\n"
+fi
+
+

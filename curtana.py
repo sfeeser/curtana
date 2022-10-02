@@ -144,21 +144,29 @@ with open("students.log", "r") as logfile:
            student_tracker["success_peg_count"] = 0
            student_tracker["fail_peg_count"] = 0
            student_tracker_list.append(student_tracker)
-
-        index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
+           # refreesh the index just created onw NOT called "Init_me"
+           index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
+        # update the student tracker array based on this log entry
         student_tracker_list[index]["cmd_peg_count"] += 1
+        # increment sucess/fail peg count based on bash result code
         if this_command.get("result") == "0":
             student_tracker_list[index]["success_peg_count"] += 1
         else:
             student_tracker_list[index]["fail_peg_count"] += 1
-        student_tracker_list[index]["latest_command"]= this_command.get('command')
-        student_tracker_list[index]["latest_result"]= this_command.get('result')
+        # overwrite the latest command with current command
+        student_tracker_list[index]["latest_command"] = this_command.get('command')
+        # overwrite the lastest bash result code
+        student_tracker_list[index]["latest_result"]  = this_command.get('result')
+        # PARSE command for class name, overwrite class-id if present
         class_name_check = class_name_parse(this_command.get("command"))
         if "class_id" in class_name_check:
               student_tracker_list[index]["class_id"] = class_name_check.get("class_id")
+        # PARSE command for student name, overwrite student name if present
         name_check = name_parse(this_command.get("command"))
         if "name" in name_check:
               student_tracker_list[index]["student_name"] = name_check.get("name")
+        # PARSE command for STUCK message
+        # Store the time/date string in a python datetime friendly manner
         student_tracker_list[index]["time_stamp"] = "2022" \
           + ":" + this_command.get('month') \
           + ":" + this_command.get('day') \
@@ -166,7 +174,7 @@ with open("students.log", "r") as logfile:
           + ":" + this_command.get('minute') \
           + ":" + this_command.get('second')
   
-    print(crayons.yellow(f"Time now: {datetime.utcnow()}")) 
+    print(crayons.yellow(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
     print(crayons.green(f"Class-ID          Student             Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
     print(crayons.green(f"----------------- ------------------  -----  -------  ----   -------------------    -------  ----------------------------------"))
     for student in student_tracker_list:

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+LAB=$1
+STEP=$2
+
+if [[ $# == 0 ]]
+    then
+	printf "\n OK, you want help! Enter your request like this:
+	  FORMAT:  help LAB# STEP#
+	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+fi
+
+if ! [[ $LAB =~ ^[0-9]+$ ]] 
+  then
+    printf "\n SORRY! Your first paramter was NOT a number, enter your help request like this:
+	  FORMAT:  help LAB# STEP#
+	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+    exit 0
+  else
+    PARAMTER1=true
+fi
+
+if ! [[ $STEP =~ ^[0-9]+$ ]] 
+  then
+    printf "\n SORRY! Your second paramter was NOT a number, enter your help request like this:
+	  FORMAT:  help LAB# STEP#
+	  EXAMPLE: Help on lab 6, step 20 enter: help 6 20\n\n"
+    exit 0
+  else
+    PARAMTER2=true
+fi
+
+if [[ $PARAMTER1 = true && $PARAMTER2 = true ]]
+  then
+    printf "\n Your request for help on LAB: $LAB  STEP: $STEP has been sent\n\n"
+fi
+
+

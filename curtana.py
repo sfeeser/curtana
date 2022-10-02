@@ -12,7 +12,7 @@ def parse(data: str) -> {}:
     Command parsing function
     ----------------------------
     Given a log entry like this:
-     "Sep  1 16:06:44 bchd.a89b5f49-0b1b-4387-905e-5cf330f8095a student: student@bchd:/home/student$ sudo apt install python3-pip -y [0]"
+     "Sep 1 16:06:44 bchd.a89b5f49-0b1b-4387-905e-5cf330f8095a student: student@bchd:/home/student$ sudo apt install python3-pip -y [0]"
   
     Return a command_anatomy of dictinataries like this:
       {     "month": "Sep",day": 1,
@@ -25,12 +25,6 @@ def parse(data: str) -> {}:
            "command: "sudo apt install python3-pip -y",
            "result": "[0]",
       }
-
-    Parameters:
-
-        data:        (string)  text data to parse
-        raw:         (boolean) unprocessed output if True
-        quiet:       (boolean) suppress warning messages if True
     """
     
 
@@ -76,8 +70,6 @@ def class_name_parse(data: str) -> {}:
         }
     return name_hints
 
-
-
 def name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
         ^(?P<prefix>\s*git\s*config\s*--global\s*user\.name)\s*
@@ -108,6 +100,20 @@ def help_parse(data: str) -> {}:
         'unparsable': data
         }
     return help_hints
+
+def clear_help_parse(data: str) -> {}:
+    clear_help_parser = re.compile(r'''
+        ^(?P<clear>\s*(bash)*\s*live-help\s*clear)
+        ''', re.VERBOSE
+    )
+    clear_help_match = clear_help_parser.match(data)
+    if clear_help_match:
+        clear_help = clear_help_match.groupdict()  #re function that Returns dicts, keyed by the subgroup name.
+    else:
+        clear_help = {
+        'unparsable': data
+        }
+    return clear_help
 
 """
 Data format 
@@ -190,6 +196,11 @@ with open("students.log", "r") as logfile:
         help_check = help_parse(this_command.get("command"))
         if "step" in help_check:
               student_tracker_list[index]["help_request"] = help_check.get("lab") + "-" + help_check.get("step")
+        # obe-wan, I do NOT need you anymore.
+        clear_help = clear_help_parse(this_command.get("command"))
+        if "clear" in clear_help:
+              student_tracker_list[index]["help_request"] = ""
+
 
     print(crayons.yellow(f"LAB: 22  COUNTER: 2   enter: \"live-gtg 22\" to report lab completed"))
     print(crayons.magenta(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
@@ -199,12 +210,17 @@ with open("students.log", "r") as logfile:
         print(crayons.green(f"{student.get('class_id','NONE'):<18}"), end = '')
         print(crayons.green(f"{student.get('student_name','none'):<17}"), end = '')
         print(crayons.red  (f"{student.get('help_request',''):>6}"), end = '')
-        print(crayons.green(f"{student.get('cmd_peg_count'):>8}  "), end = '')
+        print(crayons.green(f"{student.get('cmd_peg_count'):>7}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
         print(crayons.yellow(f"{student.get('time_stamp'):<20}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
-        print(crayons.yellow(f" {sluggy:>7}  "), end = '')
+        if sluggy < 60:
+           print(crayons.green(f" {sluggy:>7}  "), end = '')
+        elif sluggy < 120:
+           print(crayons.yellow(f" {sluggy:>7}  "), end = '')
+        elif sluggy > 180:
+           print(crayons.red(f" {sluggy:>7}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:

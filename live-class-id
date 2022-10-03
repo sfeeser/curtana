@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CLASS_ID=$1
+
+if [[ $# == 0 ]]
+    then
+	printf "\n Sorry, you must assign a class ID as shown in this example:
+        EXAMPLE: live-class-id jason-pyb18-tlg
+	Important: All students MUST be assigned the the SAME class_id\n"
+  exit 0
+fi
+
+printf " \nYour enviroment has been assigend to: $CLASS_ID\n\n"

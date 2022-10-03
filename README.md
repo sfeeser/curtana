@@ -46,20 +46,34 @@ Certian CLI commands are parsed to add considerable power to curtana:
 ### Parsed CLI commands:
 # --------------------------------------------------------
 ```
-Lab assignment:       live-lab # student-tracker class_id
+# An instructor uses the following to assign a lab to the students:
+Lab assignment:       live-lab # student-tracker class_id  
             ie:       live-lab 6 student-tracker jason-18-pyb
 
+# A student cries out for help
 Request lab help:     live-help lab# step#
               ie:     live-help 20   14 
 
+# A student (or instructor) clears the request for help
 Clear Lab Help:       live-help clear
 
+# Each student maps their environment to their name
 Assign student name:  git config --global user.name name
                  ie:  git config --global user.name seaneon
 
+# The INSTRUCTOR assigns newly spun up instances to a class_id
 Assign Class name:    live-class-id string
                ie:    live-class-id jason-18-pyb
 
+# Students report progress as follows
 Lab completion:       live-gtg lab#
             ie:       live-gtg 25
 ```
+
+
+curtana supporting bash scripts
+- live-help
+- live-gtg
+- live-class-id
+- live-lab
+- live  (A help script for the live suit)****

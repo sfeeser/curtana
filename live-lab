@@ -1,0 +1,59 @@
+#!/bin/bash
+
+LAB=$1
+PASSWORD=$2
+CLASS_ID=$3
+
+if [[ $# == 0 ]]
+    then
+	printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+
+	Format:  live-lab  lab# <password> class_id 
+                 --------  ---- ---------- --------------
+	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
+	Important: The class_id MUST match the active class_id assiged to the class
+	Contact TECH SUPPORT for the password\n"
+  exit 0
+fi
+
+if [[ $# == 1 ]]
+    then
+        printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+
+	Format:  live-lab  lab# <password> class_id 
+                 --------  ---- ---------- --------------
+	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
+	Important: The class_id MUST match the active class_id assiged to the class
+	Contact TECH SUPPORT for the password\n"
+
+  exit 0
+fi
+
+if [[ $# == 2 ]]
+    then
+        printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+
+	Format:  live-lab  lab# <password> class_id 
+                 --------  ---- ---------- --------------
+	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
+	Important: The class_id MUST match the active class_id assiged to the class
+	Contact TECH SUPPORT for the password\n"
+  exit 0
+fi
+
+if ! [[ $LAB =~ ^[0-9]+$ ]]
+  then
+    printf "\n SORRY! Your LAB paramter MUST be a number:
+
+	Format:  live-lab  lab# <password> class_id 
+                 --------  ---- ---------- --------------
+	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
+	Important: The class_id MUST match the active class_id assiged to the class
+	Contact TECH SUPPORT for the password\n"
+    exit 0
+  else
+    PARAM1=true
+    printf "\n    Lab $LAB completion message sent!\n\n"
+fi
+
+printf " \nAll students in $CLASS_ID have been assigned to LAB: $LAB \n\n"

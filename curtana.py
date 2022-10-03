@@ -244,8 +244,7 @@ with open("students.log", "r") as logfile:
         if "lab" in lab_gtg:
             student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
         #Count GTG for labs matching the assignment
-        if student_tracker_list[index]["lab_gtg"] == lab_assignment.get('lab'):
-            if student_tracker_list[index]["class_id"] == lab_assignment.get('class_id'):
+        if student_tracker_list[index]["lab_gtg"] == lab_assignment.get('lab') and student_tracker_list[index]["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
 
     print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 

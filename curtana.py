@@ -57,7 +57,7 @@ def parse(data: str) -> {}:
 
 def class_name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
-        (?P<class_prefix>live-class-id)\s*
+        (?P<class_prefix>\s*(bash)*\s*live-class-id)\s*
         (?P<class_id>.*)
         ''', re.VERBOSE
     )
@@ -238,7 +238,7 @@ with open("students.log", "r") as logfile:
         if "lab" in new_lab_assigment:
             lab_assignment = new_lab_assigment
             gtg_counter = 0
-
+            # TODO clear all student GTGs!
         #Student reports assigned lab is completed
         lab_gtg = live_gtg_parse(this_command.get("command"))
         if "lab" in lab_gtg:

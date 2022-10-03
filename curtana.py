@@ -132,6 +132,19 @@ def lab_assignment_parse(data: str) -> {}:
         }
     return this_lab_assignment
 
+def live_gtg_parse(data: str) -> {}:
+    live_gtg_parser =  re.compile(r'''
+        ^(?P<prefix>\s*(bash)*\s*live-gtg)\s*
+        (?P<lab>[0-9]+)\s*
+        ''', re.VERBOSE
+    )
+    live_gtg_parser_match = live_gtg_parser.match(data)
+    if live_gtg_parser_match:
+        live_gtg_lab = live_gtg_parser_match.groupdict()
+    else:
+        live_gtg_lab = { 'unparsable': data }
+    return live_gtg_lab
+
 """
 Data format 
 studentracker_list:
@@ -165,6 +178,7 @@ student_tracker = {}
 student_tracker_list = []
 verbose = False
 lab_assignment = {}
+gtg_counter = 0
 
 with open("students.log", "r") as logfile:
     commands = logfile.readlines()
@@ -179,6 +193,7 @@ with open("students.log", "r") as logfile:
            student_tracker["cmd_peg_count"] = 0
            student_tracker["success_peg_count"] = 0
            student_tracker["fail_peg_count"] = 0
+           student_tracker["lab_gtg"] = "0"
            student_tracker_list.append(student_tracker)
            # refreesh the index just created onw NOT called "Init_me"
            index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
@@ -222,17 +237,28 @@ with open("students.log", "r") as logfile:
         if "lab" in new_lab_assigment:
             lab_assignment = new_lab_assigment
 
-    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: 2   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
+        #Student reports assigned lab is completed
+        lab_gtg = live_gtg_parse(this_command.get("command"))
+        if "lab" in lab_gtg:
+            student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
+        #Count GTG for labs matching the assignment
+        if student_tracker_list[index]["lab_gtg"] == lab_assignment.get('lab'):
+            gtg_counter += 1
+
+    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
-    print(crayons.green(f"Class-ID          Student           Help  Cmds  Success Fail  Last Command    Seconds  Results + Latest Command"))
-    print(crayons.green(f"----------------- ----------------  ----- ----- ------- ----  --------------  -------  ----------------------------------"))
+
+    print(crayons.green(f"                                                Suc-             Last Command "))
+    print(crayons.green(f"Class-ID          Student           Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command"))
+    print(crayons.green(f"----------------- ----------------  ----- ----  ----  ----  ---  --------------  -------  ----------------------------------"))
     for student in student_tracker_list:
         print(crayons.green(f"{student.get('class_id','NONE'):<18}"), end = '')
         print(crayons.green(f"{student.get('student_name','none'):<17}"), end = '')
         print(crayons.red  (f"{student.get('help_request',''):>5}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>6}  "), end = '')
-        print(crayons.green(f"{student.get('success_peg_count'):>6}  "), end = '')
+        print(crayons.green(f"{student.get('success_peg_count'):>4}  "), end = '')
         print(crayons.green(f"{student.get('fail_peg_count'):>4}" ), end = '')
+        print(crayons.green(f"{student.get('lab_gtg',''):>5}" ), end = '')
         print(crayons.yellow(f"{student.get('time_stamp')[-14:]:>16}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
         if sluggy < 120:

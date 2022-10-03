@@ -23,7 +23,7 @@ Curtana tails /var/log/student.logs.  So this raises the question, what is "/var
 Sep 1 16:06:44 bchd.a89b5f49-0b1b-4387-905e-5cf330f8095a student: student@bchd:/home/student$ sudo apt install python3-pip -y [0]
 ```
 
-Curtana then parses the log entry into the following dictionary items:
+Curtana then parses eacch log entry and generates the following dictionary items:
 
 
 ```

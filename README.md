@@ -36,7 +36,7 @@ Curtana then parses eacch log entry and generates the following dictionary items
     "domain": str # "bchd.a89b5f49-0b1b-4387-905e-5cf330f8095a"
       "user": str
     "prompt": str
-    "command: str # Parsing this command allows some cool magic. See Parsed CLI command below 
+    "command: str # Parsing this command allows some cool magic. See Parsed CLI commands below 
     "result": str  #[0]"
 }
 ```

@@ -115,6 +115,23 @@ def clear_help_parse(data: str) -> {}:
         }
     return clear_help
 
+def lab_assignment_parse(data: str) -> {}:
+    lab_assignment_parser =  re.compile(r'''
+        ^(?P<prefix>\s*(bash)*\s*live-lab)\s*
+        (?P<lab>[0-9]+)\s*
+        (?P<psswd>student-tracker)\s*
+        (?P<class_id>.*)
+        ''', re.VERBOSE
+    )
+    lab_assignment_parser_match = lab_assignment_parser.match(data)  
+    if lab_assignment_parser_match:
+        this_lab_assignment = lab_assignment_parser_match.groupdict()
+    else:
+        this_lab_assignment = {
+        'unparsable': data
+        }
+    return this_lab_assignment
+
 """
 Data format 
 studentracker_list:
@@ -147,7 +164,7 @@ def thinktime(start_time):
 student_tracker = {}
 student_tracker_list = []
 verbose = False
-
+lab_assignment = {}
 
 with open("students.log", "r") as logfile:
     commands = logfile.readlines()
@@ -196,31 +213,34 @@ with open("students.log", "r") as logfile:
         help_check = help_parse(this_command.get("command"))
         if "step" in help_check:
               student_tracker_list[index]["help_request"] = help_check.get("lab") + "-" + help_check.get("step")
-        # obe-wan, I do NOT need you anymore.
+        # obe-wan, I do NOT need your help anymore.
         clear_help = clear_help_parse(this_command.get("command"))
         if "clear" in clear_help:
               student_tracker_list[index]["help_request"] = ""
+        # Instructor incantation to enter lab assignment
+        new_lab_assigment = lab_assignment_parse(this_command.get("command"))
+        if "lab" in new_lab_assigment:
+            lab_assignment = new_lab_assigment
 
-
-    print(crayons.yellow(f"LAB: 22  COUNTER: 2   enter: \"live-gtg 22\" to report lab completed"))
-    print(crayons.magenta(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
-    print(crayons.green(f"Class-ID          Student           Help   Cmds   Success  Fail   Time Last Command      Seconds  Results + Latest Command"))
-    print(crayons.green(f"----------------- ----------------  -----  -----  -------  ----   -------------------    -------  ----------------------------------"))
+    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: 2   enter: \"live-gtg 22\" to report lab completed"))
+    print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
+    print(crayons.green(f"Class-ID          Student           Help  Cmds  Success Fail  Last Command    Seconds  Results + Latest Command"))
+    print(crayons.green(f"----------------- ----------------  ----- ----- ------- ----  --------------  -------  ----------------------------------"))
     for student in student_tracker_list:
         print(crayons.green(f"{student.get('class_id','NONE'):<18}"), end = '')
         print(crayons.green(f"{student.get('student_name','none'):<17}"), end = '')
-        print(crayons.red  (f"{student.get('help_request',''):>6}"), end = '')
-        print(crayons.green(f"{student.get('cmd_peg_count'):>7}  "), end = '')
-        print(crayons.green(f"{student.get('success_peg_count'):>7}  "), end = '')
-        print(crayons.green(f"{student.get('fail_peg_count'):>4}  " ), end = '')
-        print(crayons.yellow(f"{student.get('time_stamp'):<20}  "), end = '')
+        print(crayons.red  (f"{student.get('help_request',''):>5}"), end = '')
+        print(crayons.green(f"{student.get('cmd_peg_count'):>6}  "), end = '')
+        print(crayons.green(f"{student.get('success_peg_count'):>6}  "), end = '')
+        print(crayons.green(f"{student.get('fail_peg_count'):>4}" ), end = '')
+        print(crayons.yellow(f"{student.get('time_stamp')[-14:]:>16}  "), end = '')
         sluggy = int(thinktime(student.get('time_stamp')))
-        if sluggy < 60:
-           print(crayons.green(f" {sluggy:>7}  "), end = '')
-        elif sluggy < 120:
-           print(crayons.yellow(f" {sluggy:>7}  "), end = '')
-        elif sluggy > 180:
-           print(crayons.red(f" {sluggy:>7}  "), end = '')
+        if sluggy < 120:
+           print(crayons.green(f" {sluggy:>6}  "), end = '')
+        elif sluggy < 300:
+           print(crayons.yellow(f" {sluggy:>6}  "), end = '')
+        elif sluggy >= 300:
+           print(crayons.red(f" {sluggy:>6}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:

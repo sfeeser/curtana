@@ -7,7 +7,7 @@ if [[ $# == 0 ]]
     then
 	printf "\n Need help in an instructor lead class?  Enter your request like this:
     ASK FOR HELP:  live-help LAB# STEP#
-    EXAMPLE: Help on lab 6, step 20 enter: live-help 6 20\n
+    EXAMPLE: live-help 6 20\n
     To CLEAR a request for help, enter: live-help clear\n\n"
 	  exit 0
 fi

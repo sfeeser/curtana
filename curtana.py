@@ -237,6 +237,7 @@ with open("students.log", "r") as logfile:
         new_lab_assigment = lab_assignment_parse(this_command.get("command"))
         if "lab" in new_lab_assigment:
             lab_assignment = new_lab_assigment
+            gtg_counter = 0
 
         #Student reports assigned lab is completed
         lab_gtg = live_gtg_parse(this_command.get("command"))

@@ -45,6 +45,7 @@ Certian CLI commands are parsed to add considerable power to curtana:
 
 ### Parsed CLI commands:
 # --------------------------------------------------------
+```
 Lab assignment:       live-lab # student-tracker class_id
             ie:       live-lab 6 student-tracker jason-18-pyb
 
@@ -59,4 +60,6 @@ Assign student name:  git config --global user.name name
 Assign Class name:    live-class-id string
                ie:    live-class-id jason-18-pyb
 
-Lab completion:       
+Lab completion:       live-gtg lab#
+            ie:       live-gtg 25
+```

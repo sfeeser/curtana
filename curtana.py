@@ -222,7 +222,7 @@ with open("students.log", "r") as logfile:
         if "lab" in new_lab_assigment:
             lab_assignment = new_lab_assigment
 
-    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: 2   enter: \"live-gtg 22\" to report lab completed"))
+    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: 2   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
     print(crayons.green(f"Class-ID          Student           Help  Cmds  Success Fail  Last Command    Seconds  Results + Latest Command"))
     print(crayons.green(f"----------------- ----------------  ----- ----- ------- ----  --------------  -------  ----------------------------------"))

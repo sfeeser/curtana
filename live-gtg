@@ -5,7 +5,7 @@ STEP=$2
 
 if [[ $# == 0 ]]
     then
-	printf "\n Tell the instructor that you completed the assign lab as follows:
+	printf "\n Tell the instructor that you completed the assigned lab as follows:
     LAB COMPLETE:  live-gtg LAB#
     EXAMPLE: Completed lab 6: live-gtg 6\n"
   exit 0

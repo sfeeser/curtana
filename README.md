@@ -1,6 +1,6 @@
 # curtana
 
-Curtana - The Sword of Mercyi and empathy. A tool that allows you to assist your students as they work through the labs.
+Curtana - The Sword of Mercy and empathy. A tool that allows you to assist your students as they work through the labs.
 
 ### Sample output:
 

@@ -8,11 +8,12 @@ Curtana - The Sword of Mercy and empathy. A tool that allows you to assist your 
 
 ```
 LAB: 26  COUNTER: 2   enter: "live-gtg 26 " to report lab completed
-Time now: 2022-10-03 11:05:20
-Class-ID      Student       Help  Cmds  Success Fail  Last Command    Seconds  Results + Latest Command
-------------- ------------  ----- ----- ------- ----  --------------  -------  ----------------------------------
-json-pyb18    seaneon               31      27     4  Oct:2:21:43:17       75  [  0] live-lab 26 student-tracker jason-pyb-18
-json-pyb18    alfred         20-6    1       0     1  Oct:2:21:43:41      120  [  2] ls deleteme.py
+Time now: 2022-10-03 15:06:52
+                                                Suc-             Last Command
+Class-ID          Student           Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command
+----------------- ----------------  ----- ----  ----  ----  ---  --------------  -------  ----------------------------------
+json-pyb-18       seaneon                   32    28     4   26  Oct:2:21:43:17    77015  [  0] live-gtg 26
+json-pyb-18       Jasper                     2     1     1   26  Oct:2:21:43:17    77015  [  0] live-gtg 26
 ```
 
 

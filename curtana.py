@@ -194,6 +194,7 @@ with open("students.log", "r") as logfile:
            student_tracker["success_peg_count"] = 0
            student_tracker["fail_peg_count"] = 0
            student_tracker["lab_gtg"] = "0"
+           student_tracker["class_id"] = ""
            student_tracker_list.append(student_tracker)
            # refreesh the index just created onw NOT called "Init_me"
            index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
@@ -243,9 +244,11 @@ with open("students.log", "r") as logfile:
             student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
         #Count GTG for labs matching the assignment
         if student_tracker_list[index]["lab_gtg"] == lab_assignment.get('lab'):
-            gtg_counter += 1
+            if student_tracker_list[index]["class_id"] == lab_assignment.get('class_id'):
+                gtg_counter += 1
 
-    print(crayons.yellow(f"\nLAB: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
+    print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 
+    print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
 
     print(crayons.green(f"                                                Suc-             Last Command "))

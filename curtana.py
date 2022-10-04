@@ -180,14 +180,14 @@ def thinktime(start_time):
     return delta.total_seconds()
 
 
-def parse_logs():
+def parse_logs(filename):
     student_tracker = {}
     student_tracker_list = []
     verbose = False
     lab_assignment = {}
     gtg_counter = 0
     
-    with open("students.log", "r") as logfile:
+    with open(filename, "r") as logfile:
         commands = logfile.readlines()
         for command in commands:
             this_command = parse(command)
@@ -252,19 +252,19 @@ def parse_logs():
     return student_tracker_list, lab_assignment
 
 
-def gtg_counter(student_tracker_list, lab_assignment):
+def gtg_calc(student_tracker_list, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
     for student in student_tracker_list:
         if student["lab_gtg"] == lab_assignment.get('lab'):
-            if student["class_id"] == lab_assignment.get('class_id'):
+            if student["class_id"] >= lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            
 
 
 def output_data(student_tracker_list, lab_assignment, gtg_counter):
     print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 
-    print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
+    print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
     
     print(crayons.green(f"                                                Suc-             Last Command "))
@@ -292,7 +292,17 @@ def output_data(student_tracker_list, lab_assignment, gtg_counter):
             print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
         print(crayons.green(f" {str(student.get('latest_command')):>3}"))
 
+if os.path.exists("/var/log/students.log"):
+    file_name = "/var/log/students.log"
+else:
+    file_name = "students.log"
 
-student_tracker_list, lab_assignment = parse_logs()
-gtg_counter = gtg_counter(student_tracker_list, lab_assignment)
-output_data(student_tracker_list, lab_assignment, gtg_counter)
+while (True):
+    student_tracker_list, lab_assignment = parse_logs(file_name)
+    gtg_counter = gtg_calc(student_tracker_list, lab_assignment)
+    os.system('clear')
+    output_data(student_tracker_list, lab_assignment, gtg_counter)
+    student_tracker_list = {}
+    lab_assignment = {}
+    gtg_counter = 0
+    time.sleep(2)

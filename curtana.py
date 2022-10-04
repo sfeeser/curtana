@@ -5,7 +5,6 @@ import json
 import crayons
 import re
 from datetime import datetime
-import keyboard
 
 def parse(data: str) -> {}:
 

@@ -5,6 +5,7 @@ import json
 import crayons
 import re
 from datetime import datetime
+import keyboard
 
 def parse(data: str) -> {}:
 
@@ -145,6 +146,17 @@ def live_gtg_parse(data: str) -> {}:
         live_gtg_lab = { 'unparsable': data }
     return live_gtg_lab
 
+
+def thinktime(start_time):
+    # start time
+
+    # convert time string to datetime
+    t1 = datetime.strptime(start_time, "%Y:%b:%d:%H:%M:%S")
+
+    # get difference
+    delta = datetime.utcnow() - t1
+    return delta.total_seconds()
+
 """
 Data - Two distict data structures are maintained
 
@@ -168,16 +180,15 @@ lab_assignment:
     class_id: string
 """
 
-
-def thinktime(start_time):
-    # start time
-
-    # convert time string to datetime
-    t1 = datetime.strptime(start_time, "%Y:%b:%d:%H:%M:%S")
-
-    # get difference
-    delta = datetime.utcnow() - t1
-    return delta.total_seconds()
+def init_student_tracker(student_tracker_list,class_id):
+    for i in range(len(student_tracker_list)):
+        if student_tracker_list[i]["class_id"] == class_id:
+             student_tracker_list[i]["cmd_peg_count"] = 0
+             student_tracker_list[i]["success_peg_count"] = 0
+             student_tracker_list[i]["fail_peg_count"] = 0
+             student_tracker_list[i]["live_help"] = ""
+             student_tracker_list[i]["live_gtg"] = ""
+    return student_tracker_list
 
 
 def parse_logs(filename):
@@ -244,7 +255,7 @@ def parse_logs(filename):
             new_lab_assigment = lab_assignment_parse(this_command.get("command"))
             if "lab" in new_lab_assigment:
                 lab_assignment = new_lab_assigment
-    
+                init_student_tracker(student_tracker_list,lab_assignment.get("class_id"))    
             #Student reports assigned lab is completed
             lab_gtg = live_gtg_parse(this_command.get("command"))
             if "lab" in lab_gtg:
@@ -256,8 +267,8 @@ def gtg_calc(student_tracker_list, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
     for student in student_tracker_list:
-        if student["lab_gtg"] == lab_assignment.get('lab'):
-            if student["class_id"] >= lab_assignment.get('class_id'):
+        if student["lab_gtg"] >= lab_assignment.get('lab'):
+            if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            
 
@@ -296,6 +307,7 @@ if os.path.exists("/var/log/students.log"):
     file_name = "/var/log/students.log"
 else:
     file_name = "students.log"
+
 
 while (True):
     student_tracker_list, lab_assignment = parse_logs(file_name)

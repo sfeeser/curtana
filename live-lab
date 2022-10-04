@@ -6,7 +6,7 @@ CLASS_ID=$3
 
 if [[ $# == 0 ]]
     then
-	printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+	printf "\n Sorry, you must assign a series of parameters to use this command. Here is an example:
 
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
@@ -18,7 +18,7 @@ fi
 
 if [[ $# == 1 ]]
     then
-        printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+        printf "\n Sorry, you must assign a series of parameters to use this command. Here is an example:
 
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
@@ -31,7 +31,7 @@ fi
 
 if [[ $# == 2 ]]
     then
-        printf "\n Sorry, you must assign a series of paramters to use this command. Here is an example:
+        printf "\n Sorry, you must assign a series of parameters to use this command. Here is an example:
 
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------

@@ -11,7 +11,7 @@ if [[ $# == 0 ]]
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
 	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
-	Important: The class_id MUST match the active class_id assiged to the class
+	Important: The class_id MUST match the active class_id assigned to the class
 	Contact TECH SUPPORT for the password\n"
   exit 0
 fi
@@ -23,7 +23,7 @@ if [[ $# == 1 ]]
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
 	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
-	Important: The class_id MUST match the active class_id assiged to the class
+	Important: The class_id MUST match the active class_id assigned to the class
 	Contact TECH SUPPORT for the password\n"
 
   exit 0
@@ -36,7 +36,7 @@ if [[ $# == 2 ]]
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
 	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
-	Important: The class_id MUST match the active class_id assiged to the class
+	Important: The class_id MUST match the active class_id assigned to the class
 	Contact TECH SUPPORT for the password\n"
   exit 0
 fi
@@ -48,7 +48,7 @@ if ! [[ $LAB =~ ^[0-9]+$ ]]
 	Format:  live-lab  lab# <password> class_id 
                  --------  ---- ---------- --------------
 	EXAMPLE: live-lab  6    <password> jason-pyb18-tlg\n
-	Important: The class_id MUST match the active class_id assiged to the class
+	Important: The class_id MUST match the active class_id assigned to the class
 	Contact TECH SUPPORT for the password\n"
     exit 0
   else

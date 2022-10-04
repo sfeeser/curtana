@@ -73,7 +73,7 @@ def class_name_parse(data: str) -> {}:
 def name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
         ^(?P<prefix>\s*git\s*config\s*--global\s*user\.name)\s*
-        "(?P<name>.*)"
+        "?(?P<name>.*)"?
         ''', re.VERBOSE
     )
     name_parser_match = name_parser.match(data)
@@ -270,6 +270,10 @@ def gtg_calc(student_tracker_list, lab_assignment):
             if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            
+
+def sort_students(student_tracker_list):
+    pass
+    
 
 
 def output_data(student_tracker_list, lab_assignment, gtg_counter):

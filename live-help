@@ -21,7 +21,7 @@ fi
 
 if ! [[ $LAB =~ ^[0-9]+$ ]] 
   then
-    printf "\n SORRY! Your first paramter was NOT a number, enter your help request like this:
+    printf "\n SORRY! Your first parameter was NOT a number, enter your help request like this:
 	  FORMAT:  live-help LAB# STEP#
 	  EXAMPLE: live-help 6 20\n\n"
     exit 0
@@ -32,7 +32,7 @@ fi
 
 if ! [[ $STEP =~ ^[0-9]+$ ]] 
   then
-    printf "\n SORRY! Your second paramter was NOT a number, enter your help request like this:
+    printf "\n SORRY! Your second parameter was NOT a number, enter your help request like this:
 	  FORMAT:  live-help LAB# STEP#
 	  EXAMPLE: live-help 6 20\n\n"
     exit 0

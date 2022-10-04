@@ -57,7 +57,7 @@ def parse(data: str) -> {}:
 
 def class_name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
-        (?P<class_prefix>\s*(bash)*\s*live-class-id)\s*
+        (?P<class_prefix>live-class-id)\s*
         (?P<class_id>.*)
         ''', re.VERBOSE
     )
@@ -146,8 +146,10 @@ def live_gtg_parse(data: str) -> {}:
     return live_gtg_lab
 
 """
-Data format 
-studentracker_list:
+Data - Two distict data structures are maintained
+
+# A set of dictionaries per student
+student_tracker_list:
   - domain: string
     class_id: string
     student_name: string
@@ -155,11 +157,15 @@ studentracker_list:
     success_peg_count: int
     fail_peg_count: int
     time_stamp: string
-    most_recent_command: string
     latest_command: string
     latest_result: string
-    live_help: string   #NEW
-    live_gtg: string    #NEW
+    live_help: string
+    live_gtg: string 
+
+# A stand-alone stucture used to allow the instructor to set a lab assisgnment to a specific class
+lab_assignment:
+    lab: string
+    class_id: string
 """
 
 
@@ -174,83 +180,93 @@ def thinktime(start_time):
     return delta.total_seconds()
 
 
-student_tracker = {}
-student_tracker_list = []
-verbose = False
-lab_assignment = {}
-gtg_counter = 0
+def parse_logs():
+    student_tracker = {}
+    student_tracker_list = []
+    verbose = False
+    lab_assignment = {}
+    gtg_counter = 0
+    
+    with open("students.log", "r") as logfile:
+        commands = logfile.readlines()
+        for command in commands:
+            this_command = parse(command)
+            # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
+            index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
+            if index == "Init_me":
+               student_tracker = {}
+               student_tracker["domain"] = this_command.get('domain')
+               student_tracker["student_name"] = ""
+               student_tracker["cmd_peg_count"] = 0
+               student_tracker["success_peg_count"] = 0
+               student_tracker["fail_peg_count"] = 0
+               student_tracker["lab_gtg"] = "0"
+               student_tracker["class_id"] = ""
+               student_tracker_list.append(student_tracker)
+               # refreesh the index just created onw NOT called "Init_me"
+               index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
+            # update the student tracker array based on this log entry
+            student_tracker_list[index]["cmd_peg_count"] += 1
+            # increment sucess/fail peg count based on bash result code
+            if this_command.get("result") == "0":
+                student_tracker_list[index]["success_peg_count"] += 1
+            else:
+                student_tracker_list[index]["fail_peg_count"] += 1
+            # overwrite the latest command with current command
+            student_tracker_list[index]["latest_command"] = this_command.get('command')
+            # overwrite the lastest bash result code
+            student_tracker_list[index]["latest_result"]  = this_command.get('result')
+            # PARSE command for class name, overwrite class-id if present
+            class_name_check = class_name_parse(this_command.get("command"))
+            if "class_id" in class_name_check:
+                  student_tracker_list[index]["class_id"] = class_name_check.get("class_id")
+            # PARSE command for student name, overwrite student name if present
+            name_check = name_parse(this_command.get("command"))
+            if "name" in name_check:
+                  student_tracker_list[index]["student_name"] = name_check.get("name")
+            # PARSE command for SETUP message
+            # Store the time/date string in a python datetime friendly manner
+            student_tracker_list[index]["time_stamp"] = "2022" \
+              + ":" + this_command.get('month') \
+              + ":" + this_command.get('day') \
+              + ":" + this_command.get('hour') \
+              + ":" + this_command.get('minute') \
+              + ":" + this_command.get('second')
+            # obe-wan kenobi you're my only hope
+            help_check = help_parse(this_command.get("command"))
+            if "step" in help_check:
+                  student_tracker_list[index]["help_request"] = help_check.get("lab") + "-" + help_check.get("step")
+            # obe-wan, I do NOT need your help anymore.
+            clear_help = clear_help_parse(this_command.get("command"))
+            if "clear" in clear_help:
+                  student_tracker_list[index]["help_request"] = ""
+            # Instructor incantation to enter lab assignment
+            new_lab_assigment = lab_assignment_parse(this_command.get("command"))
+            if "lab" in new_lab_assigment:
+                lab_assignment = new_lab_assigment
+    
+            #Student reports assigned lab is completed
+            lab_gtg = live_gtg_parse(this_command.get("command"))
+            if "lab" in lab_gtg:
+                student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
+    return student_tracker_list, lab_assignment
 
-with open("students.log", "r") as logfile:
-    commands = logfile.readlines()
-    for command in commands:
-        this_command = parse(command)
-        # The next line is a generator, it will return the idex of an existing student record, else "Init_me"
-        index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
-        if index == "Init_me":
-           student_tracker = {}
-           student_tracker["domain"] = this_command.get('domain')
-           student_tracker["student_name"] = ""
-           student_tracker["cmd_peg_count"] = 0
-           student_tracker["success_peg_count"] = 0
-           student_tracker["fail_peg_count"] = 0
-           student_tracker["lab_gtg"] = "0"
-           student_tracker["class_id"] = ""
-           student_tracker_list.append(student_tracker)
-           # refreesh the index just created onw NOT called "Init_me"
-           index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
-        # update the student tracker array based on this log entry
-        student_tracker_list[index]["cmd_peg_count"] += 1
-        # increment sucess/fail peg count based on bash result code
-        if this_command.get("result") == "0":
-            student_tracker_list[index]["success_peg_count"] += 1
-        else:
-            student_tracker_list[index]["fail_peg_count"] += 1
-        # overwrite the latest command with current command
-        student_tracker_list[index]["latest_command"] = this_command.get('command')
-        # overwrite the lastest bash result code
-        student_tracker_list[index]["latest_result"]  = this_command.get('result')
-        # PARSE command for class name, overwrite class-id if present
-        class_name_check = class_name_parse(this_command.get("command"))
-        if "class_id" in class_name_check:
-              student_tracker_list[index]["class_id"] = class_name_check.get("class_id")
-        # PARSE command for student name, overwrite student name if present
-        name_check = name_parse(this_command.get("command"))
-        if "name" in name_check:
-              student_tracker_list[index]["student_name"] = name_check.get("name")
-        # PARSE command for SETUP message
-        # Store the time/date string in a python datetime friendly manner
-        student_tracker_list[index]["time_stamp"] = "2022" \
-          + ":" + this_command.get('month') \
-          + ":" + this_command.get('day') \
-          + ":" + this_command.get('hour') \
-          + ":" + this_command.get('minute') \
-          + ":" + this_command.get('second')
-        # obe-wan kenobi you're my only hope
-        help_check = help_parse(this_command.get("command"))
-        if "step" in help_check:
-              student_tracker_list[index]["help_request"] = help_check.get("lab") + "-" + help_check.get("step")
-        # obe-wan, I do NOT need your help anymore.
-        clear_help = clear_help_parse(this_command.get("command"))
-        if "clear" in clear_help:
-              student_tracker_list[index]["help_request"] = ""
-        # Instructor incantation to enter lab assignment
-        new_lab_assigment = lab_assignment_parse(this_command.get("command"))
-        if "lab" in new_lab_assigment:
-            lab_assignment = new_lab_assigment
-            gtg_counter = 0
-            # TODO clear all student GTGs!
-        #Student reports assigned lab is completed
-        lab_gtg = live_gtg_parse(this_command.get("command"))
-        if "lab" in lab_gtg:
-            student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
-        #Count GTG for labs matching the assignment
-        if student_tracker_list[index]["lab_gtg"] == lab_assignment.get('lab') and student_tracker_list[index]["class_id"] == lab_assignment.get('class_id'):
+
+def gtg_counter(student_tracker_list, lab_assignment):
+    gtg_counter = 0
+    #Count GTG for labs matching the assignment
+    for student in student_tracker_list:
+        if student["lab_gtg"] == lab_assignment.get('lab'):
+            if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
+    return gtg_counter            
 
+
+def output_data(student_tracker_list, lab_assignment, gtg_counter):
     print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 
     print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}   enter: \"live-gtg {lab_assignment.get('lab')} \" to report lab completed"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
-
+    
     print(crayons.green(f"                                                Suc-             Last Command "))
     print(crayons.green(f"Class-ID          Student           Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command"))
     print(crayons.green(f"----------------- ----------------  ----- ----  ----  ----  ---  --------------  -------  ----------------------------------"))
@@ -274,6 +290,9 @@ with open("students.log", "r") as logfile:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:
             print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
-            
         print(crayons.green(f" {str(student.get('latest_command')):>3}"))
 
+
+student_tracker_list, lab_assignment = parse_logs()
+gtg_counter = gtg_counter(student_tracker_list, lab_assignment)
+output_data(student_tracker_list, lab_assignment, gtg_counter)

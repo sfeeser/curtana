@@ -252,9 +252,9 @@ def parse_logs(filename):
             if "clear" in clear_help:
                   student_tracker_list[index]["help_request"] = ""
             # Instructor incantation to enter lab assignment
-            new_lab_assigment = lab_assignment_parse(this_command.get("command"))
-            if "lab" in new_lab_assigment:
-                lab_assignment = new_lab_assigment
+            new_lab_assignment = lab_assignment_parse(this_command.get("command"))
+            if "lab" in new_lab_assignment:
+                lab_assignment = new_lab_assignment
                 init_student_tracker(student_tracker_list,lab_assignment.get("class_id"))    
             #Student reports assigned lab is completed
             lab_gtg = live_gtg_parse(this_command.get("command"))

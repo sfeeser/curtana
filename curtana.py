@@ -283,12 +283,12 @@ def output_data(student_tracker_list, lab_assignment, gtg_counter):
     print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}"))
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
     
-    print(crayons.green(f"                                                Suc-             Last Command "))
-    print(crayons.green(f"Class-ID          Student           Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command"))
-    print(crayons.green(f"----------------- ----------------  ----- ----  ----  ----  ---  --------------  -------  ----------------------------------"))
+    print(crayons.green(f"                                                 Suc-             Last Command "))
+    print(crayons.green(f"Class-ID        Student              Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command"))
+    print(crayons.green(f"--------------  ------------------   ----- ----  ----  ----  ---  --------------  -------  ----------------------------------"))
     for student in student_tracker_list:
-        print(crayons.green(f"{student.get('class_id','NONE'):<18}"), end = '')
-        print(crayons.green(f"{student.get('student_name','none'):<17}"), end = '')
+        print(crayons.green(f"{student.get('class_id','NONE'):<16}"), end = '')
+        print(crayons.green(f"{student.get('student_name','none'):<20}"), end = '')
         print(crayons.red  (f"{student.get('help_request',''):>5}"), end = '')
         print(crayons.green(f"{student.get('cmd_peg_count'):>6}  "), end = '')
         print(crayons.green(f"{student.get('success_peg_count'):>4}  "), end = '')

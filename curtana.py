@@ -5,6 +5,7 @@ import json
 import crayons
 import re
 from datetime import datetime
+from operator import itemgetter, attrgetter
 
 def parse(data: str) -> {}:
 
@@ -73,7 +74,7 @@ def class_name_parse(data: str) -> {}:
 def name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
         ^(?P<prefix>\s*git\s*config\s*--global\s*user\.name)\s*
-        "?(?P<name>.*)"?
+        "*(?P<name>[a-zA-Z0-9 ]*)"*
         ''', re.VERBOSE
     )
     name_parser_match = name_parser.match(data)
@@ -147,11 +148,8 @@ def live_gtg_parse(data: str) -> {}:
 
 
 def thinktime(start_time):
-    # start time
-
     # convert time string to datetime
     t1 = datetime.strptime(start_time, "%Y:%b:%d:%H:%M:%S")
-
     # get difference
     delta = datetime.utcnow() - t1
     return delta.total_seconds()
@@ -185,8 +183,9 @@ def init_student_tracker(student_tracker_list,class_id):
              student_tracker_list[i]["cmd_peg_count"] = 0
              student_tracker_list[i]["success_peg_count"] = 0
              student_tracker_list[i]["fail_peg_count"] = 0
-             student_tracker_list[i]["live_help"] = ""
-             student_tracker_list[i]["live_gtg"] = ""
+             student_tracker_list[i]["live_help"] = ''
+             student_tracker_list[i]["lab_gtg"] = ''
+    #         student_tracker_list[i]["latest_command"] = "NEW LAB"
     return student_tracker_list
 
 
@@ -210,7 +209,7 @@ def parse_logs(filename):
                student_tracker["cmd_peg_count"] = 0
                student_tracker["success_peg_count"] = 0
                student_tracker["fail_peg_count"] = 0
-               student_tracker["lab_gtg"] = "0"
+               student_tracker["lab_gtg"] = ""
                student_tracker["class_id"] = ""
                student_tracker_list.append(student_tracker)
                # refreesh the index just created onw NOT called "Init_me"
@@ -233,7 +232,7 @@ def parse_logs(filename):
             # PARSE command for student name, overwrite student name if present
             name_check = name_parse(this_command.get("command"))
             if "name" in name_check:
-                  student_tracker_list[index]["student_name"] = name_check.get("name")
+                  student_tracker_list[index]["student_name"] = name_check.get("name").lower()
             # PARSE command for SETUP message
             # Store the time/date string in a python datetime friendly manner
             student_tracker_list[index]["time_stamp"] = "2022" \
@@ -255,6 +254,7 @@ def parse_logs(filename):
             if "lab" in new_lab_assignment:
                 lab_assignment = new_lab_assignment
                 init_student_tracker(student_tracker_list,lab_assignment.get("class_id"))    
+                student_tracker_list[index]["latest_command"] = "NEW LAB!"
             #Student reports assigned lab is completed
             lab_gtg = live_gtg_parse(this_command.get("command"))
             if "lab" in lab_gtg:
@@ -272,8 +272,10 @@ def gtg_calc(student_tracker_list, lab_assignment):
     return gtg_counter            
 
 def sort_students(student_tracker_list):
-    pass
-    
+    s   = sorted(student_tracker_list, key=itemgetter('student_name')) 
+    ss  = sorted(s,   key=itemgetter('lab_gtg'))
+    sss = sorted(ss, key=itemgetter('class_id'))
+    return sss
 
 
 def output_data(student_tracker_list, lab_assignment, gtg_counter):
@@ -316,6 +318,7 @@ while (True):
     student_tracker_list, lab_assignment = parse_logs(file_name)
     gtg_counter = gtg_calc(student_tracker_list, lab_assignment)
     os.system('clear')
+    student_tracker_list = sort_students(student_tracker_list)
     output_data(student_tracker_list, lab_assignment, gtg_counter)
     student_tracker_list = {}
     lab_assignment = {}

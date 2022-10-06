@@ -203,7 +203,7 @@ def init_student_tracker(student_tracker_list,class_id):
              student_tracker_list[i]["success_peg_count"] = 0
              student_tracker_list[i]["fail_peg_count"] = 0
              student_tracker_list[i]["help_request"] = ''
-             student_tracker_list[i]["lab_gtg"] = ''
+             student_tracker_list[i]["lab_gtg"] = 0 
     return student_tracker_list
 
 
@@ -276,7 +276,7 @@ def parse_logs(filename):
             #Student reports assigned lab is completed
             lab_gtg = live_gtg_parse(this_command.get("command"))
             if "lab" in lab_gtg:
-                student_tracker_list[index]["lab_gtg"] = lab_gtg.get("lab")
+                student_tracker_list[index]["lab_gtg"] = int(lab_gtg.get("lab"))
     return student_tracker_list, lab_assignment
 
 
@@ -284,7 +284,7 @@ def gtg_calc(student_tracker_list, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
     for student in student_tracker_list:
-        if student["lab_gtg"] == lab_assignment.get('lab'):
+        if student["lab_gtg"] == int(lab_assignment.get('lab')):
             if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            

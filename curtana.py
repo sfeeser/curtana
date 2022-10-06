@@ -301,7 +301,7 @@ def get_template(filename,student_tracker_list,lab_assignment,gtg_counter):
      tm = env.get_template(filename)
      page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab_assignment=lab_assignment)
      #TODO: The next line MUST point to where the web page is served until it is served from curtana natively (flask).
-     f = open("/mnt/c/Users/Stuart/Desktop/tracker.html", "w")
+     f = open("/opt/enchilada/run/static/curtana/tracker.html", "w")     
      f.write(page)
      f.close
 

@@ -1,3 +1,69 @@
+.headerrow {
+    overflow: hidden;
+   # border: 2px solid black; 
+     margin: 0px;
+     z-index: 1;
+     position: relative;
+}
+
+.row{
+    overflow: hidden;
+   # border: 2px solid black; 
+     margin: 0px;
+     background-color: #f5f5f5;
+     z-index: 1;
+     position: relative;
+}
+
+.row:hover {
+     background-color: #a5a5a5;
+}
+
+.clickable {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;     
+  z-index: 1;
+}
+
+.container {
+border: 2px solid black;
+margin-right: 1px;
+margin-left: 1px;
+padding: 0;
+width: 98%
+}
+
+[class*="col-"]{
+    margin-bottom: -99px;
+    padding-bottom: 99px;
+}
+
+.col-xs-2 {
+padding-right: 2px;
+padding-left: 2px;
+border: 1px solid black;
+
+}
+
+.col-xs-1, .col-xs-3 {
+  border: 1px solid black;
+  padding-right: 0px;
+  padding-left: 0px;
+  background-color: #f5f5f5;
+  vertical-align: bottom;
+}
+
+.col-xs-4 {
+  border: 1px solid black;
+  padding-right: 0px;
+  padding-left: 4px;
+  background-color: #f5f5f5;
+  vertical-align: bottom;
+}
+
 * {
 	margin: 0;
 	padding: 0;

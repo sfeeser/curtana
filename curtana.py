@@ -170,7 +170,7 @@ def thinktime(start_time):
         secs %= 3600
         minutes = secs // 60
         secs %= 60
-        return "%d:%02d:%02d" % (hour, minutes, seconds)
+        return "%d:%02d:%02d" % (hour, minutes, secs)
 
 """
 Data - Two distict data structures are maintained
@@ -227,7 +227,7 @@ def parse_logs(filename):
                student_tracker["cmd_peg_count"] = 0
                student_tracker["success_peg_count"] = 0
                student_tracker["fail_peg_count"] = 0
-               student_tracker["lab_gtg"] = ""
+               student_tracker["lab_gtg"] = 0
                student_tracker["class_id"] = ""
                student_tracker_list.append(student_tracker)
                # refresh the index just created onw NOT called "Init_me"
@@ -284,7 +284,7 @@ def gtg_calc(student_tracker_list, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
     for student in student_tracker_list:
-        if student["lab_gtg"] >= lab_assignment.get('lab'):
+        if student["lab_gtg"] == lab_assignment.get('lab'):
             if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            

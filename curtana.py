@@ -39,6 +39,7 @@ def parse(data: str) -> {}:
         (?P<hour>[01]\d|2[0-4]):
         (?P<minute>[0-5]\d):
         (?P<second>[0-5]\d)\s*
+        (?P<host>[a-z0-9]*)\.\s*
         (?P<domain>[a-z\.0-9\-]*)\s*
         (?P<user>[a-z]*):?\s
         (?P<prompt>[\/a-zA-Z\.0-9\-@:]*)[\$#]?\s*
@@ -153,7 +154,23 @@ def thinktime(start_time):
     t1 = datetime.strptime(start_time, "%Y:%b:%d:%H:%M:%S")
     # get difference
     delta = datetime.utcnow() - t1
-    return delta.total_seconds()
+    secs = delta.total_seconds()
+    if secs > 432000:
+        return "HDJ"
+    elif secs > 345600:
+        return ">4 Days"
+    elif secs > 259200:
+        return ">3 days"
+    elif secs > 172800:
+        return ">2 days"
+    elif secs >= 86400:
+        return ">1 day"
+    elif secs < 86400:
+        hour = secs // 3600
+        secs %= 3600
+        minutes = secs // 60
+        secs %= 60
+        return "%d:%02d:%02d" % (hour, minutes, seconds)
 
 """
 Data - Two distict data structures are maintained
@@ -283,6 +300,7 @@ def get_template(filename,student_tracker_list,lab_assignment,gtg_counter):
      env = Environment(loader=file_loader)
      tm = env.get_template(filename)
      page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab_assignment=lab_assignment)
+     #TODO: The next line MUST point to where the web page is served until it is served from curtana natively (flask).
      f = open("/mnt/c/Users/Stuart/Desktop/tracker.html", "w")
      f.write(page)
      f.close
@@ -305,19 +323,14 @@ def output_data(student_tracker_list, lab_assignment, gtg_counter):
         print(crayons.green(f"{student.get('fail_peg_count'):>4}" ), end = '')
         print(crayons.green(f"{student.get('lab_gtg',''):>5}" ), end = '')
         print(crayons.yellow(f"{student.get('time_stamp')[-14:]:>16}  "), end = '')
-        think_lag = int(thinktime(student.get('time_stamp')))
-        if think_lag < 120:
-           print(crayons.green(f" {think_lag:>6}  "), end = '')
-        elif think_lag < 300:
-           print(crayons.yellow(f" {think_lag:>6}  "), end = '')
-        elif think_lag >= 300:
-           print(crayons.red(f" {think_lag:>6}  "), end = '')
+        think_lag = thinktime(student.get('time_stamp'))
+        student['think_lag'] = think_lag
+        print(crayons.red(f" {think_lag:>6}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:
             print(crayons.green(f"[{student.get('latest_result'):>3}]"), end = '' )
         print(crayons.green(f" {str(student.get('latest_command')):>3}"))
-
 if os.path.exists("/var/log/students.log"):
     file_name = "/var/log/students.log"
 else:

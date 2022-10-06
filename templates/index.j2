@@ -21,12 +21,19 @@
          Class-ID        Student              Help  Cmds  cess  Fail  GTG   Timestamp           Seconds  Results + Latest Command
          --------------  ------------------   ----- ----  ----  ----  ---  -------------------   -------  ----------------------------------
          {% for student in student_tracker_list -%} 
-	 {{ "%-16s" | format(student.class_id) }}{{ "%-19s" | format(student.student_name) }}{{ "%-8s"  | format(student.help_request) }}{{ "%-8s"  | format(student.cmd_peg_count) }}{{ "%-5s"  | format(student.success_peg_count) }}{{ "%-5s"  | format(student.fail_peg_count) }}{{ "%-5s"  | format(student.lab_gtg) }}{{  "%-12s"  | format(student.time_stamp) }}{{ "%-8s" | format(student.brain_lag) }}[{{ student.latest_result }}] {{ student.latest_command }}
+	 {{ "%-16s" | format(student.class_id) }}{{ "%-19s" | format(student.student_name) }}{{ "%-8s"  | format(student.help_request) }}{{ "%-8s"  | format(student.cmd_peg_count) }}{{ "%-5s"  | format(student.success_peg_count) }}{{ "%-5s"  | format(student.fail_peg_count) }}{{ "%-5s"  | format(student.lab_gtg) }}{{ "%-9s" | format(student.time_stamp) }}   {{ "%-9s" | format(student.think_lag) }}[{{ student.latest_result }}] {{ student.latest_command }}
          {% endfor %}
      </pre></code
    </p></strong>
-   <div class="container">   
-    <div class="row"><strong>
+
+   <div class="container">  
+    <div class="headerrow"><strong>
+         <div class="col-xs-12 text-rght">Tracking LAB: {{ lab_assignment.lab }} in CLASS_ID: {{ lab_assignment.class_id }}</div> 
+    </div>
+    <div class="headerrow"><strong>
+         <div class="col-xs-12 text-rght">GTG COUNTER: {{ gtg_counter }}</div> 
+    </div>
+    <div class="headerrow"><strong>
         <div class="col-xs-1 text-center">Class-ID</div>
         <div class="col-xs-2">Student</div>
         <div class="col-xs-1 text-center">Help</div>
@@ -41,18 +48,18 @@
     </div>
     </strong>
     {% for student in student_tracker_list -%}
-      <div class="row"><strong>
-        <tr style="outline: thin solid">
-        <div class="col-xs-1 text-center">{{ student.class_id       }}</div>
-        <div class="col-xs-2">{{ student.student_name   }}</div>
-        <div class="col-xs-1 text-center"> *{{ student.help_request   }}</div>
+      <div class="row"><a href="https://tmux-{{ student.domain }}.live.alpha.alta3.com" target="_blank"><span class="clickable"></span></a>
+        <strong>
+        <div class="col-xs-1 text-center">{{ student.class_id }}</div>
+        <div class="col-xs-2">{{ student.student_name }}</div>
+        <div class="col-xs-1 text-center"> {{ student.help_request }}</div>
         <div class="col-xs-2">
-           <div class="col-xs-4 text-center">{{ student.cmd_peg_count  }}</div>
+           <div class="col-xs-4 text-center">{{ student.cmd_peg_count }}</div>
            <div class="col-xs-4 text-center">{{ student.success_peg_count }}</div>
            <div class="col-xs-4 text-center">{{ student.fail_peg_count }}</div>
         </div>
-        <div class="col-xs-1 text-center"> *{{ student.lab_gtg        }}</div>
-        <div class="col-xs-1 text-center"> Seconds</div>
+        <div class="col-xs-1 text-center"> {{ student.lab_gtg }}</div>
+        <div class="col-xs-1 text-center">{{ student.think_lag }} </div>
         <div class="col-xs-4">[{{ student.latest_result }}] {{ student.latest_command }}</div>
     </strong></div>
     {% endfor %}

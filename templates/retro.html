@@ -8,11 +8,24 @@
     <link href="styles.css" rel="stylesheet"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <meta http-equiv="refresh" content="2">
    
   </head>
   <body style="margin-left: 20px"   >
    <img src="alta3-logo.jpg" width="100" alt="Alta3 Logo" >
+   <strong><p style="font-family: Arial, Helvetica, sans-serif;">
+      <code><pre>
+	 
+	 Tracking LAB: {{ lab_assignment.lab }} in CLASS_ID: {{ lab_assignment.class_id }}
+	 GTG COUNTER: {{ gtg_counter }}
+
+         Class-ID        Student              Help  Cmds  cess  Fail  GTG   Timestamp           Seconds  Results + Latest Command
+         --------------  ------------------   ----- ----  ----  ----  ---  -------------------   -------  ----------------------------------
+         {% for student in student_tracker_list -%} 
+	 {{ "%-16s" | format(student.class_id) }}{{ "%-19s" | format(student.student_name) }}{{ "%-8s"  | format(student.help_request) }}{{ "%-8s"  | format(student.cmd_peg_count) }}{{ "%-5s"  | format(student.success_peg_count) }}{{ "%-5s"  | format(student.fail_peg_count) }}{{ "%-5s"  | format(student.lab_gtg) }}{{ "%-9s" | format(student.time_stamp) }}   {{ "%-9s" | format(student.think_lag) }}[{{ student.latest_result }}] {{ student.latest_command }}
+         {% endfor %}
+     </pre></code
+   </p></strong>
+
    <div class="container">  
     <div class="headerrow"><strong>
          <div class="col-xs-12 text-rght">Tracking LAB: {{ lab_assignment.lab }} in CLASS_ID: {{ lab_assignment.class_id }}</div> 

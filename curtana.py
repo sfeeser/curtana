@@ -6,6 +6,7 @@ import crayons
 import re
 from datetime import datetime
 from operator import itemgetter, attrgetter
+from jinja2 import Environment, FileSystemLoader
 
 def parse(data: str) -> {}:
 
@@ -178,14 +179,14 @@ lab_assignment:
 """
 
 def init_student_tracker(student_tracker_list,class_id):
+    # [student["cmd_peg_count"] = 0 for student in student_tracker_list if student["class_id"] == class_id]
     for i in range(len(student_tracker_list)):
         if student_tracker_list[i]["class_id"] == class_id:
              student_tracker_list[i]["cmd_peg_count"] = 0
              student_tracker_list[i]["success_peg_count"] = 0
              student_tracker_list[i]["fail_peg_count"] = 0
-             student_tracker_list[i]["live_help"] = ''
+             student_tracker_list[i]["help_request"] = ''
              student_tracker_list[i]["lab_gtg"] = ''
-    #         student_tracker_list[i]["latest_command"] = "NEW LAB"
     return student_tracker_list
 
 
@@ -212,7 +213,7 @@ def parse_logs(filename):
                student_tracker["lab_gtg"] = ""
                student_tracker["class_id"] = ""
                student_tracker_list.append(student_tracker)
-               # refreesh the index just created onw NOT called "Init_me"
+               # refresh the index just created onw NOT called "Init_me"
                index = next((i for i, item in enumerate(student_tracker_list) if item["domain"] == this_command.get('domain')), "Init_me")
             # update the student tracker array based on this log entry
             student_tracker_list[index]["cmd_peg_count"] += 1
@@ -277,6 +278,15 @@ def sort_students(student_tracker_list):
     sss = sorted(ss, key=itemgetter('class_id'))
     return sss
 
+def get_template(filename,student_tracker_list,lab_assignment,gtg_counter):
+     file_loader = FileSystemLoader('templates')
+     env = Environment(loader=file_loader)
+     tm = env.get_template(filename)
+     page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab_assignment=lab_assignment)
+     f = open("/mnt/c/Users/Stuart/Desktop/tracker.html", "w")
+     f.write(page)
+     f.close
+
 
 def output_data(student_tracker_list, lab_assignment, gtg_counter):
     print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 
@@ -295,13 +305,13 @@ def output_data(student_tracker_list, lab_assignment, gtg_counter):
         print(crayons.green(f"{student.get('fail_peg_count'):>4}" ), end = '')
         print(crayons.green(f"{student.get('lab_gtg',''):>5}" ), end = '')
         print(crayons.yellow(f"{student.get('time_stamp')[-14:]:>16}  "), end = '')
-        sluggy = int(thinktime(student.get('time_stamp')))
-        if sluggy < 120:
-           print(crayons.green(f" {sluggy:>6}  "), end = '')
-        elif sluggy < 300:
-           print(crayons.yellow(f" {sluggy:>6}  "), end = '')
-        elif sluggy >= 300:
-           print(crayons.red(f" {sluggy:>6}  "), end = '')
+        think_lag = int(thinktime(student.get('time_stamp')))
+        if think_lag < 120:
+           print(crayons.green(f" {think_lag:>6}  "), end = '')
+        elif think_lag < 300:
+           print(crayons.yellow(f" {think_lag:>6}  "), end = '')
+        elif think_lag >= 300:
+           print(crayons.red(f" {think_lag:>6}  "), end = '')
         if student.get('latest_result') is None:
             print(crayons.green(f"{[  0]}"), end = '' )
         else:
@@ -320,6 +330,7 @@ while (True):
     os.system('clear')
     student_tracker_list = sort_students(student_tracker_list)
     output_data(student_tracker_list, lab_assignment, gtg_counter)
+    get_template("index.j2",student_tracker_list,lab_assignment,gtg_counter)
     student_tracker_list = {}
     lab_assignment = {}
     gtg_counter = 0

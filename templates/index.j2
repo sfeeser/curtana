@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="icon" type="image/png" href="https://static.alta3.com/courses/5g/info/a3-favicon-16x16.png">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="styles.css" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   
+  </head>
+  <body style="margin-left: 20px"   >
+   <img src="alta3-logo.jpg" width="100" alt="Alta3 Logo" >
+   <strong><p style="font-family: Arial, Helvetica, sans-serif;">
+      <code><pre>
+	 
+	 Tracking LAB: {{ lab_assignment.lab }} in CLASS_ID: {{ lab_assignment.class_id }}
+	 GTG COUNTER: {{ gtg_counter }}
+
+         Class-ID        Student              Help  Cmds  cess  Fail  GTG   Timestamp           Seconds  Results + Latest Command
+         --------------  ------------------   ----- ----  ----  ----  ---  -------------------   -------  ----------------------------------
+         {% for student in student_tracker_list -%} 
+	 {{ "%-16s" | format(student.class_id) }}{{ "%-19s" | format(student.student_name) }}{{ "%-8s"  | format(student.help_request) }}{{ "%-8s"  | format(student.cmd_peg_count) }}{{ "%-5s"  | format(student.success_peg_count) }}{{ "%-5s"  | format(student.fail_peg_count) }}{{ "%-5s"  | format(student.lab_gtg) }}{{  "%-12s"  | format(student.time_stamp) }}{{ "%-8s" | format(student.brain_lag) }}[{{ student.latest_result }}] {{ student.latest_command }}
+         {% endfor %}
+     </pre></code
+   </p></strong>
+   <div class="container">   
+    <div class="row"><strong>
+        <div class="col-xs-1 text-center">Class-ID</div>
+        <div class="col-xs-2">Student</div>
+        <div class="col-xs-1 text-center">Help</div>
+        <div class="col-xs-2">
+           <div class="col-xs-4 text-center">Cmds</div>
+           <div class="col-xs-4 text-center">Suc-cess</div>
+           <div class="col-xs-4 text-center">Fail</div>
+         </div>
+        <div class="col-xs-1 text-center ">GTG</div>
+        <div class="col-xs-1 text-center">Seconds</div>
+        <div class="col-xs-4">Result + Latest Command</div>
+    </div>
+    </strong>
+    {% for student in student_tracker_list -%}
+      <div class="row"><strong>
+        <tr style="outline: thin solid">
+        <div class="col-xs-1 text-center">{{ student.class_id       }}</div>
+        <div class="col-xs-2">{{ student.student_name   }}</div>
+        <div class="col-xs-1 text-center"> *{{ student.help_request   }}</div>
+        <div class="col-xs-2">
+           <div class="col-xs-4 text-center">{{ student.cmd_peg_count  }}</div>
+           <div class="col-xs-4 text-center">{{ student.success_peg_count }}</div>
+           <div class="col-xs-4 text-center">{{ student.fail_peg_count }}</div>
+        </div>
+        <div class="col-xs-1 text-center"> *{{ student.lab_gtg        }}</div>
+        <div class="col-xs-1 text-center"> Seconds</div>
+        <div class="col-xs-4">[{{ student.latest_result }}] {{ student.latest_command }}</div>
+    </strong></div>
+    {% endfor %}
+   </div>
+  </body>
+</html>

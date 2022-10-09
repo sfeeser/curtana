@@ -284,7 +284,7 @@ def gtg_calc(student_tracker_list, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
     for student in student_tracker_list:
-        if student["lab_gtg"] == int(lab_assignment.get('lab')):
+        if student["lab_gtg"] == lab_assignment.get('lab'):
             if student["class_id"] == lab_assignment.get('class_id'):
                 gtg_counter += 1
     return gtg_counter            

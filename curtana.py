@@ -61,7 +61,7 @@ def parse(data: str) -> {}:
 def class_name_parse(data: str) -> {}:
     name_parser = re.compile(r'''
         (?P<class_prefix>live-class-id)\s*
-        (?P<class_id>.*)
+        (?P<class_id>[0-9a-zA-Z-]*)\s*
         ''', re.VERBOSE
     )
     class_name_parser_match = name_parser.match(data)
@@ -123,7 +123,7 @@ def lab_assignment_parse(data: str) -> {}:
         ^(?P<prefix>\s*(bash)*\s*live-lab)\s*
         (?P<lab>[0-9]+)\s*
         (?P<psswd>student-tracker)\s*
-        (?P<class_id>.*)
+        (?P<class_id>[0-9a-zA-Z-]*)\s*
         ''', re.VERBOSE
     )
     lab_assignment_parser_match = lab_assignment_parser.match(data)  
@@ -190,8 +190,9 @@ student_tracker_list:
     live_gtg: string 
 
 # A stand-alone stucture used to allow the instructor to set a lab assisgnment to a specific class
+
 lab_assignment:
-    lab: string
+ -  lab_assignment: int
     class_id: string
 """
 
@@ -211,7 +212,8 @@ def parse_logs(filename):
     student_tracker = {}
     student_tracker_list = []
     verbose = False
-    lab_assignment = {}
+    lab_assignments = []
+    class_tracker_list = []
     gtg_counter = 0
     
     with open(filename, "r") as logfile:
@@ -270,23 +272,36 @@ def parse_logs(filename):
             # Instructor incantation to enter lab assignment
             new_lab_assignment = lab_assignment_parse(this_command.get("command"))
             if "lab" in new_lab_assignment:
-                lab_assignment = new_lab_assignment
-                init_student_tracker(student_tracker_list,lab_assignment.get("class_id"))    
-                student_tracker_list[index]["latest_command"] = "NEW LAB!"
+                print("PARSE")
+                print(new_lab_assignment)
+                lab_index = next((i for i, item in enumerate(lab_assignments) if item["class_id"] == new_lab_assignment.get('class_id')), -1)
+                print(lab_index)
+                print(new_lab_assignment.get("class_id"))
+                if lab_index == -1:
+                   lab_tracker = {}
+                   lab_tracker["class_id"] = new_lab_assignment.get("class_id")
+                   lab_tracker["lab"] = new_lab_assignment.get("lab")
+                   lab_assignments.append(lab_tracker)
+                   lab_index = next((i for i, item in enumerate(lab_assignments) if item["class_id"] == new_lab_assignment.get("class_id")), 0)
+                lab_assignments[lab_index]["class_id"] = new_lab_assignment.get("class_id")
+                lab_assignments[lab_index]["lab"] = new_lab_assignment.get("lab")                
+                print(f"lab assignments >{lab_assignments[lab_index]['class_id']}<")
+                print(lab_assignments)
+                init_student_tracker(student_tracker_list,new_lab_assignment.get("class_id"))    
+                student_tracker_list[index]["latest_command"] = "NEW LAB ASSIGNED!"
             #Student reports assigned lab is completed
             lab_gtg = live_gtg_parse(this_command.get("command"))
             if "lab" in lab_gtg:
                 student_tracker_list[index]["lab_gtg"] = int(lab_gtg.get("lab"))
-    return student_tracker_list, lab_assignment
+    return student_tracker_list, lab_assignments
 
 
-def gtg_calc(student_tracker_list, lab_assignment):
+def gtg_calc(students, lab_assignment):
     gtg_counter = 0
     #Count GTG for labs matching the assignment
-    for student in student_tracker_list:
-        if student["lab_gtg"] == lab_assignment.get('lab'):
-            if student["class_id"] == lab_assignment.get('class_id'):
-                gtg_counter += 1
+    for student in students:
+        if student["lab_gtg"] == lab_assignment:
+            gtg_counter += 1
     return gtg_counter            
 
 def sort_students(student_tracker_list):
@@ -295,22 +310,37 @@ def sort_students(student_tracker_list):
     sss = sorted(ss, key=itemgetter('class_id'))
     return sss
 
-def get_template(filename,student_tracker_list,lab_assignment,gtg_counter):
+def write_page(page_name, template_name, student_tracker_list, lab, id, gtg_counter):
      file_loader = FileSystemLoader('templates')
      env = Environment(loader=file_loader)
-     tm = env.get_template(filename)
-     page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab_assignment=lab_assignment)
+     tm = env.get_template(template_name)
+     page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab=lab, id=id)
      #TODO: The next line MUST point to where the web page is served until it is served from curtana natively (flask).
-     f = open("/opt/enchilada/run/static/curtana/tracker.html", "w")     
+     f = open("/opt/enchilada/run/static/curtana/" + page_name, "w")     
+     # f = open(page_name, "w")     
      f.write(page)
      f.close
 
 
-def output_data(student_tracker_list, lab_assignment, gtg_counter):
-    print(crayons.yellow(f"\nLab Counter only counting students assigned to: {lab_assignment.get('class_id')}")) 
-    print(crayons.yellow(f"Lab Assignment: {lab_assignment.get('lab')}  COUNTER: {gtg_counter}"))
+def write_class_pages(student_tracker_list,lab_assignments):
+    class_ids = []
+    for student in student_tracker_list:
+        if student['class_id'] not in class_ids:
+            class_ids.append(student['class_id'])
+            this_id_list = [classmate for classmate in student_tracker_list if classmate['class_id'] == student['class_id']]
+            this_lab_assignment = [assignment for assignment in lab_assignments if assignment['class_id'] == student['class_id']]
+            # Handle undefined pab assignment
+            if this_lab_assignment == []:
+                 this_lab_assignment = [{'class_id': student['class_id'], 'lab': 0}]
+            id = this_lab_assignment[0].get('class_id')
+            lab = this_lab_assignment[0].get('lab')
+            gtg_counter = gtg_calc(this_id_list, lab)
+            write_page(student.get('class_id') + "%s.html", "index.j2", this_id_list, lab, id, gtg_counter)
+
+
+def output_data(student_tracker_list, lab_assignment):
     print(crayons.green(f"Time now: {datetime.now().isoformat(' ', 'seconds')}")) 
-    
+  
     print(crayons.green(f"                                                 Suc-             Last Command "))
     print(crayons.green(f"Class-ID        Student              Help  Cmds  cess  Fail  GTG   Timestamp      Seconds  Results + Latest Command"))
     print(crayons.green(f"--------------  ------------------   ----- ----  ----  ----  ---  --------------  -------  ----------------------------------"))
@@ -338,12 +368,12 @@ else:
 
 
 while (True):
-    student_tracker_list, lab_assignment = parse_logs(file_name)
-    gtg_counter = gtg_calc(student_tracker_list, lab_assignment)
+    student_tracker_list, lab_assignments = parse_logs(file_name)
     os.system('clear')
     student_tracker_list = sort_students(student_tracker_list)
-    output_data(student_tracker_list, lab_assignment, gtg_counter)
-    get_template("index.j2",student_tracker_list,lab_assignment,gtg_counter)
+    output_data(student_tracker_list, lab_assignments)
+    write_page("tracker.html", "index.j2", student_tracker_list,0,0,0)
+    write_class_pages(student_tracker_list,lab_assignments)    
     student_tracker_list = {}
     lab_assignment = {}
     gtg_counter = 0

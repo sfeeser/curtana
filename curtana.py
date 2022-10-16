@@ -316,10 +316,14 @@ def write_page(page_name, template_name, student_tracker_list, lab, id, gtg_coun
      tm = env.get_template(template_name)
      page = tm.render(gtg_counter=gtg_counter,student_tracker_list=student_tracker_list,lab=lab, id=id)
      #TODO: The next line MUST point to where the web page is served until it is served from curtana natively (flask).
-     f = open("/opt/enchilada/run/static/curtana/" + page_name, "w")     
-     # f = open(page_name, "w")     
+     #f = open("/opt/enchilada/run/static/curtana/" + page_name + ".html", "w")     
+     f = open(page_name + ".html", "w")     
      f.write(page)
      f.close
+     json_object = json.dumps(student_tracker_list, indent=4)
+     # with open("/opt/enchilada/run/static/curtana/" + page_name + ".json" , "w") as outfile:
+     with open(page_name + '.json' , "w") as outfile:    
+         outfile.write(json_object)
 
 
 def write_class_pages(student_tracker_list,lab_assignments):
@@ -335,7 +339,7 @@ def write_class_pages(student_tracker_list,lab_assignments):
             id = this_lab_assignment[0].get('class_id')
             lab = this_lab_assignment[0].get('lab')
             gtg_counter = gtg_calc(this_id_list, lab)
-            write_page(student.get('class_id') + "%s.html", "index.j2", this_id_list, lab, id, gtg_counter)
+            write_page(student.get('class_id'), "body.html.j2", this_id_list, lab, id, gtg_counter)
 
 
 def output_data(student_tracker_list, lab_assignment):
@@ -372,7 +376,7 @@ while (True):
     os.system('clear')
     student_tracker_list = sort_students(student_tracker_list)
     output_data(student_tracker_list, lab_assignments)
-    write_page("tracker.html", "index.j2", student_tracker_list,0,0,0)
+    write_page("tracker", "index.j2", student_tracker_list,0,0,0)
     write_class_pages(student_tracker_list,lab_assignments)    
     student_tracker_list = {}
     lab_assignment = {}

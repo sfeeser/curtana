@@ -28,7 +28,7 @@
   z-index: 1;
 }
 
-.container {
+#container {
 border: 2px solid black;
 margin-right: 1px;
 margin-left: 1px;
@@ -39,6 +39,11 @@ width: 98%
 [class*="col-"]{
     margin-bottom: -99px;
     padding-bottom: 99px;
+}
+
+#myBtn {
+ margin-bottom:  20px;
+ padding-right: 4px;
 }
 
 .col-xs-2 {

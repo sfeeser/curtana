@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <Access-Control-Allow-Origin 'https://labs.alta3.com/curtana/tracker.html' />
+        <title>Curtana</title>
+        <link rel="icon" type="image/png" href="https://static.alta3.com/courses/5g/info/a3-favicon-16x16.png">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="styles.css" rel="stylesheet"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<script>
+           function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+	</script>
+
+        <script>
+            $(document).ready(function(){
+                $("#myBtn").click(function(){
+                    var my_class_id = $("#Class_id").val();
+		    let filename = 'http://localhost:8000/';
+		    filename += my_class_id;
+		    filename += '.html';
+                    alert(filename);
+		    startRefresh(filename);
+                });
+            });
+            
+             async function startRefresh(filename) {
+		while (true) {
+                    $.get(filename, function(data) {$('#container').html(data); });
+	            await sleep(4000);
+		}
+            }
+        </script>
+
+    </head>
+    <body style="margin-left: 20px"   >
+         <img src="alta3-logo.jpg" width="100" alt="Alta3 Logo" >
+         <br>
+         <input type="text" id="Class_id">
+         <button type="button" id="myBtn"><-- Enter CLASS_ID and click me</button>
+         <div id="container">  
+ 
+         </div>
+     </body>
+</html>

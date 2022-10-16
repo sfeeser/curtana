@@ -1,28 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <Access-Control-Allow-Origin 'https://labs.alta3.com/curtana/tracker.html' />
-    <title>Curtana</title>
-    <link rel="icon" type="image/png" href="https://static.alta3.com/courses/5g/info/a3-favicon-16x16.png">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="styles.css" rel="stylesheet"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script>
-    $(function() {
-        startRefresh();
-    });
-    
-    function startRefresh() {
-        setTimeout(startRefresh,2000);
-        $.get('https://labs.alta3.com/curtana/tracker.html', function(data) {$('#container').html(data); });
-    }
-    </script>
-   </head>
-  <body style="margin-left: 20px"   >
-   <img src="alta3-logo.jpg" width="100" alt="Alta3 Logo" >
-   <div id="container">  
     <div class="headerrow"><strong>
          <div class="col-xs-12 text-rght">Tracking LAB: {{ lab }} in CLASS_ID: {{ id }}</div> 
     </div>
@@ -59,9 +34,3 @@
         <div class="col-xs-4">[{{ student.latest_result }}] {{ student.latest_command }}</div>
     </strong></div>
     {% endfor %}
-
-
-
-   </div>
-  </body>
-</html>
